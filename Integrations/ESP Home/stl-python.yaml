@@ -1,0 +1,323 @@
+#Define Project
+esphome:
+  name: apollo-msr-1
+  friendly_name: Apollo Multisensor Mk1 (MSR-1)
+  comment: Apollo Multisensor Mk1 (MSR-1)
+  name_add_mac_suffix: true
+  platformio_options:
+    board_build.flash_mode: dio
+
+  on_boot:
+  - priority: 900.0
+    then:
+      - lambda: |-
+          id(cpu_speed) = ESP.getCpuFreqMHz();
+
+  project:
+    name: "ApolloAutomation.MSR-1"
+    version: "MSR-1"
+
+  min_version: 2023.6.1 # 2023.8.0
+
+# Define Board
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+  #board: featheresp32-s2
+
+globals:
+  - id: cpu_speed
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+# Enable Home Assistant API
+# Also Add Buzzer Service Connection
+api:
+  #encryption:
+  #  key: "Csv8khdaMzNQyVYMYVpCfcDFHXiJYiYjZ+KMY8g4xF4="
+  services:
+    - service: play_buzzer
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+
+    #Co2 Calibration Service
+    - service: calibrate_co2_value
+      variables:
+        co2_ppm: float
+      then:
+        - scd4x.perform_forced_calibration:
+            value: !lambda 'return co2_ppm;'
+            id: scd40
+
+    #Setting HLK Password
+    - service: set_ld2410_bluetooth_password
+      variables:
+        password: string
+      then:
+        - bluetooth_password.set:
+            id: ld2410_radar
+            password: !lambda 'return password;'
+
+logger:
+
+ota:
+  password: "apolloautomation"
+  safe_mode: false
+
+wifi:
+  ssid: "Wifi" #!secret wifi_ssid
+  password: "Password!" #!secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Apollo MSR1 Hotspot"
+    password: ""
+
+captive_portal:
+
+web_server:
+  port: 80
+
+
+
+# Set Up Key Ports For Communication
+i2c:
+  sda: GPIO1
+  scl: GPIO0
+  id: bus_a
+
+uart:
+  tx_pin: GPIO21
+  rx_pin: GPIO20
+  baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
+
+# Numbers For Configuration
+number:
+  - platform: ld2410
+    timeout:
+      name: Radar Timeout
+    max_move_distance_gate:
+      name: Radar Max Move Distance
+    max_still_distance_gate:
+      name: Radar Max Still Distance
+
+  #Temperature Offsets
+  - platform: template
+    name: SCD40 Temperature Offset
+    id: scd40_temperature_offset
+    restore_value: true
+    initial_value: 20.0
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "°F"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+
+  - platform: template
+    name: BME280 Temperature Offset
+    id: bme280_temperature_offset
+    restore_value: true
+    initial_value: 20.0
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "°F"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+
+  - platform: template
+    name: Co2 Calibration Number
+    id: co2_calibration_number
+    restore_value: true
+    initial_value: 419.0
+    min_value: 0.0
+    max_value: 1000.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "ppm"
+    optimistic: true
+    mode: "box"
+    update_interval: never
+    step: 10
+    set_action:
+      - scd4x.perform_forced_calibration:
+          value: !lambda 'return id(co2_calibration_number).state;'
+          id: scd40
+
+# Buzzer
+output:
+  - platform: ledc
+    pin: GPIO10
+    id: buzzer
+rtttl:
+ output: buzzer
+
+
+
+binary_sensor:
+  - platform: status
+    name: Online
+    id: ink_ha_connected
+  - platform: ld2410
+    has_target:
+      name: Radar Target
+    has_moving_target:
+      name: Radar Moving Target
+    has_still_target:
+      name: Radar Still Target
+    
+
+ld2410:
+  id: ld2410_radar
+  
+
+sensor:
+  - platform: template
+    name: "ESP Cpu Speed"
+    accuracy_decimals: 0
+    unit_of_measurement: Mhz
+    lambda: |-
+      return (id(cpu_speed));
+    entity_category: "diagnostic"
+
+  - platform: template
+    id: sys_esp_temperature
+    name: ESP Temperature
+    lambda: return temperatureRead();
+    unit_of_measurement: °C
+    device_class: TEMPERATURE
+    update_interval: 60s
+
+
+  - platform: uptime
+    name: Uptime
+    id: sys_uptime
+    update_interval: 60s
+
+  - platform: template
+    id: esp_memory
+    icon: mdi:memory
+    name: ESP Free Memory
+    lambda: return heap_caps_get_free_size(MALLOC_CAP_INTERNAL) / 1024;
+    unit_of_measurement: "kB"
+    state_class: measurement
+    entity_category: "diagnostic"
+
+  - platform: wifi_signal
+    name: RSSI
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  - platform: scd4x
+    id: scd40
+    co2:
+      name: "CO2"
+      id: "co2"
+    temperature:
+      name: SCD40 Temperature
+      id: scd40temperature
+      filters:
+        - lambda: return x - id(scd40_temperature_offset).state;
+    humidity:
+      name: SCD40 Humidity
+      id: scd40humidity
+    automatic_self_calibration: false
+    update_interval: 60s
+    measurement_mode: "periodic"
+    i2c_id: bus_a
+    ambient_pressure_compensation_source: bme280pressure
+
+
+  - platform: ld2410
+    moving_distance:
+      name : Radar Moving Distance
+      id: moving_distance
+    still_distance:
+      name: Radar Still Distance
+      id: still_distance
+    moving_energy:
+      name: Radar Move Energy
+    still_energy:
+      name: Radar Still Energy
+    detection_distance:
+      name: Radar Detection Distance
+
+  - platform: bme280
+    temperature:
+      name: "BME280 Temperature"
+      id: bme280temperature
+      filters:
+        - lambda: return x - id(bme280_temperature_offset).state;
+    pressure:
+      name: "BME280 Pressure"
+      id: bme280pressure
+    humidity:
+      name: "BME280 Humidity"
+      id: bme280humidity
+    update_interval: 60s
+    i2c_id: bus_a
+    address: 0x76
+  
+  - platform: ltr390
+    uv:
+      name: "LTR390 UV"
+      id: ltr390uv
+    light:
+      name: "LTR390 Light"
+      id: ltr390light
+    uv_index:
+      name: "LTR390 UV Index"
+      id: ltr390uvindex
+    ambient_light:
+      name: "LTR390 Ambient Light"
+      id: ltr390ambientlight
+    update_interval: 60s
+
+
+light:
+  - platform: neopixelbus
+    type: GRB
+    variant: WS2812x
+    pin: GPIO3
+    num_leds: 1
+    name: "RGB Light"
+    method:
+      type: esp32_rmt
+      channel: 0
+
+
+
+time:
+  - platform: sntp
+    id: time_sntp
+
+button:
+  - platform: restart
+    icon: mdi:power-cycle
+    name: "ESP Reboot"
+
+  - platform: factory_reset
+    disabled_by_default: True
+    name: Factory Reset
+    id: factory_reset_all
+
+  - platform: ld2410
+    factory_reset:
+      name: "Factory Reset ld2410"
+    restart:
+      name: "Restart ld2410"
+
+switch:
+  - platform: ld2410
+    bluetooth:
+      name: "Radar Control Bluetooth"
