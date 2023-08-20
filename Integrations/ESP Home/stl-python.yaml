@@ -17,7 +17,7 @@ esphome:
     name: "ApolloAutomation.MSR-1"
     version: "MSR-1"
 
-  min_version: 2023.6.1 # 2023.8.0
+  min_version: 2023.8.0
 
 # Define Board
 esp32:
