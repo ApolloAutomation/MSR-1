@@ -79,6 +79,7 @@ ota:
 wifi:
   ssid: "Wifi" #!secret wifi_ssid
   password: "Password!" #!secret wifi_password
+  power_save_mode: none
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -130,7 +131,7 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°F"
+    unit_of_measurement: "°"
     optimistic: true
     update_interval: never
     step: 0.1
@@ -143,7 +144,7 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°F"
+    unit_of_measurement: "°"
     optimistic: true
     update_interval: never
     step: 0.1
