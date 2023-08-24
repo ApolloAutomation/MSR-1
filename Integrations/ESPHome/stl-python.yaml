@@ -13,11 +13,18 @@ esphome:
       - lambda: |-
           id(cpu_speed) = ESP.getCpuFreqMHz();
 
+  #- priority: 250
+  #  then:
+  #    - delay: 15s
+  #    - lambda: |-
+  #        id(ble_tracker).set_scan_continuous(true);
+  #        id(ble_tracker).start_scan();
+
   project:
     name: "ApolloAutomation.MSR-1"
     version: "MSR-1"
 
-  min_version: 2023.8.0
+  min_version: 2023.8.1 #2023.6.1
 
 # Define Board
 esp32:
@@ -72,6 +79,7 @@ ota:
 wifi:
   ssid: "Wifi" #!secret wifi_ssid
   password: "Password!" #!secret wifi_password
+  power_save_mode: none
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -82,6 +90,12 @@ captive_portal:
 
 web_server:
   port: 80
+
+#esp32_ble_tracker:
+#  id: ble_tracker
+#  continuous_mode: false
+#  interval: 211ms
+#  window: 120ms
 
 
 
@@ -117,7 +131,7 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°F"
+    unit_of_measurement: "°"
     optimistic: true
     update_interval: never
     step: 0.1
@@ -130,7 +144,7 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°F"
+    unit_of_measurement: "°"
     optimistic: true
     update_interval: never
     step: 0.1
