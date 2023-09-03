@@ -50,8 +50,7 @@ globals:
 # Enable Home Assistant API
 # Also Add Buzzer Service Connection
 api:
-  #encryption:
-  #  key: "Csv8khdaMzNQyVYMYVpCfcDFHXiJYiYjZ+KMY8g4xF4="
+
   services:
     - service: play_buzzer
       variables:
@@ -85,16 +84,16 @@ ota:
   safe_mode: false
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+
   power_save_mode: none
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "Apollo MSR1 Hotspot"
-    password: ""
 
 captive_portal:
+
+improv_serial:
 
 web_server:
   port: 80
