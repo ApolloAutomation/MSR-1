@@ -1,4 +1,9 @@
 #Define Project
+substitutions:
+  name: apollo-msr-1
+  version:  23-08-26-1
+  device_description: ${name} made by ApolloAutomation - version ${version}.
+  
 esphome:
   name: apollo-msr-1
   friendly_name: Apollo Multisensor Mk1 (MSR-1)
@@ -32,6 +37,9 @@ esp32:
   framework:
     type: arduino
   #board: featheresp32-s2
+  
+dashboard_import:
+  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/stl-python.yaml
 
 globals:
   - id: cpu_speed
