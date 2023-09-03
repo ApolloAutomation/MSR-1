@@ -5,7 +5,7 @@ substitutions:
   device_description: ${name} made by ApolloAutomation - version ${version}.
   
 esphome:
-  name: apollo-msr-1
+  name: "${name}"
   friendly_name: Apollo Multisensor Mk1 (MSR-1)
   comment: Apollo Multisensor Mk1 (MSR-1)
   name_add_mac_suffix: true
