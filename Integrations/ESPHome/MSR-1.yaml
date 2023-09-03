@@ -18,28 +18,22 @@ esphome:
       - lambda: |-
           id(cpu_speed) = ESP.getCpuFreqMHz();
 
-  #- priority: 250
-  #  then:
-  #    - delay: 15s
-  #    - lambda: |-
-  #        id(ble_tracker).set_scan_continuous(true);
-  #        id(ble_tracker).start_scan();
-
   project:
     name: "ApolloAutomation.MSR-1"
     version: "MSR-1"
 
-  min_version: 2023.8.1 #2023.6.1
+  min_version: 2023.8.1
 
 # Define Board
 esp32:
   board: esp32-c3-devkitm-1
   framework:
     type: arduino
-  #board: featheresp32-s2
   
 dashboard_import:
-  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/stl-python.yaml
+  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml@main
+  import_full_config: true
+
 
 globals:
   - id: cpu_speed
@@ -97,12 +91,6 @@ improv_serial:
 
 web_server:
   port: 80
-
-#esp32_ble_tracker:
-#  id: ble_tracker
-#  continuous_mode: false
-#  interval: 211ms
-#  window: 120ms
 
 
 
