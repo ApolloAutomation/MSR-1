@@ -32,7 +32,7 @@ esp32:
   
 dashboard_import:
   package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml@main
-  import_full_config: true
+  import_full_config: false
 
 
 globals:
