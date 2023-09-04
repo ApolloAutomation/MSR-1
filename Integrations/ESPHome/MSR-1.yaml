@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  23-09-4-1
+  version:  23-09-4-3
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -212,7 +212,6 @@ number:
     name: "Radar End Zone 1"
     id: radar_z1_end
     unit_of_measurement: "cm/in"
-    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -229,7 +228,6 @@ number:
     name: "Radar End Zone 2"
     id: radar_z2_end
     unit_of_measurement: "cm/in"
-    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -246,7 +244,6 @@ number:
     name: "Radar End Zone 3"
     id: radar_z3_end
     unit_of_measurement: "cm/in"
-    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
