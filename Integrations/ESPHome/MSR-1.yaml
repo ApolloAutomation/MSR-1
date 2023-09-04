@@ -211,7 +211,8 @@ number:
   - platform: template
     name: "Radar End Zone 1"
     id: radar_z1_end
-    unit_of_measurement: "cm"
+    unit_of_measurement: "cm/in"
+    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -227,7 +228,8 @@ number:
   - platform: template
     name: "Radar End Zone 2"
     id: radar_z2_end
-    unit_of_measurement: "cm"
+    unit_of_measurement: "cm/in"
+    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -235,7 +237,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 50
+    initial_value: 36
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
@@ -243,6 +245,7 @@ number:
   - platform: template
     name: "Radar End Zone 3"
     id: radar_z3_end
+    unit_of_measurement: "cm/in"
     device_class: distance
     min_value: 0
     max_value: 600
