@@ -1,8 +1,8 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  23-08-26-1
-  device_description: ${name} made by ApolloAutomation - version ${version}.
+  version:  23-09-4-1
+  device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
   name: "${name}"
@@ -207,6 +207,55 @@ number:
           value: !lambda 'return id(co2_calibration_number).state;'
           id: scd40
 
+  # Setting ending of zone 1 occupancy
+  - platform: template
+    name: "Radar End Zone 1"
+    id: radar_z1_end
+    unit_of_measurement: "cm"
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 10
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+
+  # Setting ending of zone 2 occupancy
+  - platform: template
+    name: "Radar End Zone 2"
+    id: radar_z2_end
+    unit_of_measurement: "cm"
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 50
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+
+  # Setting ending of zone 3 occupancy
+  - platform: template
+    name: "Radar End Zone 3"
+    id: radar_z3_end
+    device_class: distance
+    unit_of_measurement: "cm"
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 100
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+
 # Buzzer
 output:
   - platform: ledc
@@ -224,10 +273,43 @@ binary_sensor:
   - platform: ld2410
     has_target:
       name: Radar Target
+      id: radar_has_target
     has_moving_target:
       name: Radar Moving Target
     has_still_target:
       name: Radar Still Target
+  ## Set Up Radar Zones Based On Distance
+  - platform: template
+    name: "Radar Zone 1 Occupancy"
+    device_class: occupancy
+    icon: mdi:motion-sensor
+    lambda: |-
+      if ((id(radar_has_target).state) && (id(radar_detection_distance).state < id(radar_z1_end).state)) {
+        return true;
+      } else {
+        return false;
+      }
+  - platform: template
+    name: "Radar Zone 2 Occupancy"
+    device_class: occupancy
+    icon: mdi:motion-sensor
+    lambda: |-
+      if ((id(radar_has_target).state) && ((id(radar_z1_end).state < id(radar_detection_distance).state) && (id(radar_detection_distance).state < id(radar_z2_end).state))) {
+        return true;
+      } else {
+        return false;
+      }
+  - platform: template
+    name: "Radar Zone 3 Occupancy"
+    device_class: occupancy
+    icon: mdi:motion-sensor
+    lambda: |-
+      if ((id(radar_has_target).state) && ((id(radar_z2_end).state < id(radar_detection_distance).state) && (id(radar_detection_distance).state < id(radar_z3_end).state))) {
+        return true;
+      } else {
+        return false;
+      }
+
     
 
 ld2410:
@@ -294,7 +376,7 @@ sensor:
 
   - platform: ld2410
     moving_distance:
-      name : Radar Moving Distance
+      name: Radar Moving Distance
       id: moving_distance
     still_distance:
       name: Radar Still Distance
@@ -305,6 +387,7 @@ sensor:
       name: Radar Still Energy
     detection_distance:
       name: Radar Detection Distance
+      id: radar_detection_distance
     g0:
       move_energy:
         name: g0 move energy
@@ -382,6 +465,7 @@ sensor:
       id: ltr390ambientlight
     update_interval: 60s
 
+  
 
 light:
   - platform: neopixelbus
