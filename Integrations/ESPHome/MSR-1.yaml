@@ -244,7 +244,6 @@ number:
     name: "Radar End Zone 3"
     id: radar_z3_end
     device_class: distance
-    unit_of_measurement: "cm"
     min_value: 0
     max_value: 600
     step: 1
