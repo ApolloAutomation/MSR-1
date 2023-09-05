@@ -17,6 +17,7 @@ esphome:
     then:
       - lambda: |-
           id(cpu_speed) = ESP.getCpuFreqMHz();
+          id(radar_bluetooth).turn_off();
 
   project:
     name: "ApolloAutomation.MSR-1"
@@ -211,7 +212,7 @@ number:
   - platform: template
     name: "Radar End Zone 1"
     id: radar_z1_end
-    unit_of_measurement: ""
+    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -227,7 +228,7 @@ number:
   - platform: template
     name: "Radar End Zone 2"
     id: radar_z2_end
-    unit_of_measurement: ""
+    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -243,7 +244,7 @@ number:
   - platform: template
     name: "Radar End Zone 3"
     id: radar_z3_end
-    unit_of_measurement: ""
+    device_class: distance
     min_value: 0
     max_value: 600
     step: 1
@@ -506,6 +507,7 @@ switch:
   - platform: ld2410
     bluetooth:
       name: "Radar Control Bluetooth"
+      id: radar_bluetooth
     engineering_mode:
       name: "Radar Engineering Mode"
 
