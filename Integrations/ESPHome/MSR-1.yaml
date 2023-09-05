@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  23-09-4-3
+  version:  23-09-4-4
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -172,10 +172,11 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°"
+    unit_of_measurement: "°C"
     optimistic: true
     update_interval: never
     step: 0.1
+    mode: box
 
   - platform: template
     name: BME280 Temperature Offset
@@ -185,10 +186,11 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°"
+    unit_of_measurement: "°C"
     optimistic: true
     update_interval: never
     step: 0.1
+    mode: box
 
   - platform: template
     name: Co2 Calibration Number
@@ -200,7 +202,7 @@ number:
     entity_category: "CONFIG"
     unit_of_measurement: "ppm"
     optimistic: true
-    mode: "box"
+    mode: box
     update_interval: never
     step: 10
     set_action:
