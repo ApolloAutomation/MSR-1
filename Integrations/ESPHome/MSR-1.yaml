@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  23-09-11-1
+  version:  "23.9110"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -21,7 +21,7 @@ esphome:
 
   project:
     name: "ApolloAutomation.MSR-1"
-    version: "MSR-1"
+    version: "${version}"
 
   min_version: 2023.8.1
 
