@@ -21,7 +21,7 @@ esphome:
 
   project:
     name: "ApolloAutomation.MSR-1"
-    version: "MSR-1"
+    version: "${version}"
 
   min_version: 2023.8.1
 
