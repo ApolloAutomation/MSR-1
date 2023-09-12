@@ -186,13 +186,13 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°C"
+    unit_of_measurement: "%"
     optimistic: true
     update_interval: never
     step: 0.1
     mode: box
 
-      - platform: template
+  - platform: template
     name: BME280 Humidity Offset
     id: bme280_humidity_offset
     restore_value: true
@@ -200,13 +200,13 @@ number:
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
-    unit_of_measurement: "°C"
+    unit_of_measurement: "%"
     optimistic: true
     update_interval: never
     step: 0.1
     mode: box
 
-      - platform: template
+  - platform: template
     name: BME280 Temperature Offset
     id: bme280_temperature_offset
     restore_value: true
