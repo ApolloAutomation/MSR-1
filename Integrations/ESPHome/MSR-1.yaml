@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.9110"
+  version:  "23.9111"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -32,7 +32,7 @@ esp32:
     type: arduino
   
 dashboard_import:
-  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml@main
+  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
   import_full_config: false
 
 
