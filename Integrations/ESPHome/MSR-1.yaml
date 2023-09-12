@@ -168,7 +168,7 @@ number:
     name: SCD40 Temperature Offset
     id: scd40_temperature_offset
     restore_value: true
-    initial_value: 20.0
+    initial_value: 13.13
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
@@ -179,10 +179,38 @@ number:
     mode: box
 
   - platform: template
+    name: SCD40 Humidity Offset
+    id: scd40_humidity_offset
+    restore_value: true
+    initial_value: -38.51
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "°C"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+
+      - platform: template
+    name: BME280 Humidity Offset
+    id: bme280_humidity_offset
+    restore_value: true
+    initial_value: -23.19
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "°C"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+
+      - platform: template
     name: BME280 Temperature Offset
     id: bme280_temperature_offset
     restore_value: true
-    initial_value: 20.0
+    initial_value: 7.11
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
@@ -369,6 +397,8 @@ sensor:
     humidity:
       name: SCD40 Humidity
       id: scd40humidity
+      filters:
+        - lambda: return x - id(scd40_humidity_offset).state;
     automatic_self_calibration: false
     update_interval: 60s
     measurement_mode: "periodic"
@@ -448,6 +478,8 @@ sensor:
     humidity:
       name: "BME280 Humidity"
       id: bme280humidity
+      filters:
+        - lambda: return x - id(bme280_humidity_offset).state;
     update_interval: 60s
     i2c_id: bus_a
     address: 0x76
