@@ -1,4 +1,4 @@
-# Apollo mmWave Multisensor Mk1 (MSR-1)
+# Apollo mmWave CO2 Multisensor Mk1 (MSR-1)
 
 ![image](https://github.com/ApolloAutomation/MSR-1/assets/24777085/5f67cf3d-4b61-4867-97e9-057eff124b19)
 
