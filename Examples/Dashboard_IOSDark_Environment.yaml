@@ -1,0 +1,167 @@
+#From: https://shop.apolloautomation.cloud/products/multisensor-mk1
+views:
+  - title: Home
+    theme: ios-dark-mode-blue-red-alternative
+    type: custom:horizontal-layout
+    badges: []
+    cards:
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - entity: light.apollo_msr_1_a79e1c_rgb_light
+            name: Office Notification
+          - type: custom:rgb-light-card
+            entity: light.apollo_msr_1_a79e1c_rgb_light
+            colors:
+              - rgb_color:
+                  - 234
+                  - 136
+                  - 140
+                brightness: 255
+                transition: 1
+              - rgb_color:
+                  - 251
+                  - 180
+                  - 139
+                brightness: 255
+                transition: 1
+              - rgb_color:
+                  - 136
+                  - 198
+                  - 237
+                brightness: 255
+                transition: 1
+              - rgb_color:
+                  - 140
+                  - 231
+                  - 185
+                brightness: 255
+                transition: 1
+        theme: Mushroom
+        state_color: true
+      - type: custom:apexcharts-card
+        graph_span: 4hr
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+        yaxis:
+          - id: first
+            decimals: 1
+            apex_config:
+              tickAmount: 10
+          - id: second
+            opposite: true
+            decimals: 1
+            apex_config:
+              tickAmount: 10
+        series:
+          - entity: sensor.apollo_msr_1_a79e1c_bme280_humidity
+            yaxis_id: first
+            name: Office Humidity
+            color: '#8533ff'
+            group_by:
+              func: avg
+              duration: 15min
+          - entity: sensor.apollo_msr_1_a79e1c_bme280_temperature
+            yaxis_id: second
+            name: Office Temperature
+            color: '#3385ff'
+            group_by:
+              func: avg
+              duration: 15min
+      - type: custom:apexcharts-card
+        header:
+          show: true
+          title: MSR-1 Radar Distance
+          show_states: true
+          colorize_states: true
+        apex_config:
+          legend:
+            position: top
+            horizontalAlign: center
+            offsetX: -80
+            offsetY: 0
+        experimental:
+          brush: true
+        brush:
+          selection_span: 4h
+        graph_span: 24hr
+        chart_type: scatter
+        series:
+          - entity: sensor.apollo_msr_1_a79e1c_radar_detection_distance
+            name: Detection
+            stroke_width: 1
+            color: green
+            show:
+              in_brush: true
+              extremas: true
+            group_by:
+              func: avg
+              duration: 10min
+          - entity: sensor.apollo_msr_1_a79e1c_radar_moving_distance
+            name: Moving
+            stroke_width: 1
+            group_by:
+              func: avg
+              duration: 10min
+          - entity: sensor.apollo_msr_1_a79e1c_radar_still_distance
+            name: Still
+            stroke_width: 1
+            group_by:
+              func: avg
+              duration: 10min
+      - type: custom:apexcharts-card
+        header:
+          show: true
+          title: ApexCharts-Card
+          show_states: true
+          colorize_states: true
+        series:
+          - entity: sensor.trevors_iphone_distance
+            name: 1000 ppm
+            unit: ppm
+            data_generator: |
+              const now = new Date();
+              const data = [];
+              for(let i = 0; i <= 24; i++) {
+                data.push([now.getTime() - i * 1000 * 60 * 60, 1000])
+              }
+              return data.reverse();
+          - entity: sensor.apollo_msr_1_0a0dc4_co2
+            name: Office CO2
+            type: column
+            group_by:
+              func: avg
+              duration: 30min
+      - type: custom:apexcharts-card
+        graph_span: 4hr
+        header:
+          show: true
+          show_states: true
+          colorize_states: true
+        yaxis:
+          - id: first
+            decimals: 2
+            apex_config:
+              tickAmount: 10
+          - id: second
+            opposite: true
+            decimals: 5
+            apex_config:
+              tickAmount: 10
+        series:
+          - entity: sensor.apollo_msr_1_a79e1c_ltr390_light
+            yaxis_id: first
+            name: Office Light
+            color: '#EAC435'
+            group_by:
+              func: avg
+              duration: 15min
+          - entity: sensor.apollo_msr_1_a79e1c_ltr390_uv_index
+            yaxis_id: second
+            name: Office UV
+            color: '#EB4511'
+            group_by:
+              func: avg
+              duration: 5min
