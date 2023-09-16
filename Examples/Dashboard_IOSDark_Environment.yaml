@@ -1,7 +1,7 @@
 #From: https://shop.apolloautomation.cloud/products/multisensor-mk1
 views:
   - title: Home
-    theme: ios-dark-mode-blue-red-alternative
+    theme: ios-dark-mode-dark-green
     type: custom:horizontal-layout
     badges: []
     cards:
