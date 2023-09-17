@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.9111"
+  version:  "23.9161"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -483,6 +483,32 @@ sensor:
     update_interval: 60s
     i2c_id: bus_a
     address: 0x76
+
+  - platform: bme280
+    temperature:
+      name: "BME280 Temperature Calibrated"
+      id: bme280temperatureCalibrated
+      filters:
+      - calibrate_linear:
+         datapoints:
+          - 28.19 -> 20.6
+          - 28.28 -> 20.8
+          - 28.02 -> 20.8
+          - 28.33 -> 20.9
+          - 28.28 -> 21.0
+        
+    humidity:
+      name: "BME280 Humidity Calibrated"
+      id: bme280humidityCalibrated
+      filters:
+      - calibrate_linear:
+         datapoints:
+          - 37.59 -> 60.3
+          - 38.99 -> 63.5
+          - 38.69 -> 61.3
+    update_interval: 60s
+    i2c_id: bus_a
+    address: 0x76
   
   - platform: ltr390
     uv:
@@ -500,7 +526,6 @@ sensor:
     update_interval: 60s
 
   
-
 light:
   - platform: neopixelbus
     type: GRB
