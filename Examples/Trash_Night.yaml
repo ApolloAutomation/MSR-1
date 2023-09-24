@@ -1,0 +1,23 @@
+alias: Trash Night
+description: ""
+trigger:
+  - platform: time
+    at: "19:00:00"
+condition:
+  - condition: time
+    after: "19:00:00"
+    weekday:
+      - thu
+      - sun
+action:
+  - service: light.turn_on
+    data:
+      rgb_color:
+        - 0
+        - 255
+        - 0
+    target:
+      device_id:
+        - 7b0838187606a4e9aa52f7c3551e43d2
+        - 15adabe0183616b457776d54124db796
+mode: single

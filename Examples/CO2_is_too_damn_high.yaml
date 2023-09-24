@@ -1,0 +1,22 @@
+alias: CO2 is too damn high
+description: ""
+trigger:
+  - type: carbon_dioxide
+    platform: device
+    device_id: 15adabe0183616b457776d54124db796
+    entity_id: 58e25c7939ab9fc1d82ad4c22704c23e
+    domain: sensor
+    above: 1500
+condition: []
+action:
+  - service: light.turn_on
+    data:
+      rgb_color:
+        - 255
+        - 0
+        - 0
+    target:
+      device_id:
+        - 7b0838187606a4e9aa52f7c3551e43d2
+        - 15adabe0183616b457776d54124db796
+mode: single

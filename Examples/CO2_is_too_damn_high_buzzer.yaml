@@ -1,0 +1,21 @@
+alias: CO2 is too damn high buzzer
+description: ""
+trigger:
+  - type: carbon_dioxide
+    platform: device
+    device_id: 15adabe0183616b457776d54124db796
+    entity_id: 58e25c7939ab9fc1d82ad4c22704c23e
+    domain: sensor
+    above: 2000
+condition: []
+action:
+  - service: esphome.apollo_msr_1_a79e38_play_buzzer
+    data:
+      song_str: >-
+        Cantina:d=4,o=5,b=250:8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8p,8d6,8p,
+  - delay:
+      hours: 0
+      minutes: 15
+      seconds: 0
+      milliseconds: 0
+mode: single
