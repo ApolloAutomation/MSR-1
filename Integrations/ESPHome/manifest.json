@@ -1,0 +1,14 @@
+{
+    "name": "apollo-msr-1",
+    "version": "23.10311",
+    "home_assistant_domain": "esphome",
+    "new_install_prompt_erase": false,
+    "builds": [
+      {
+        "chipFamily": "ESP32-C3",
+        "parts": [
+          { "path": "https://github.com/ApolloAutomation/MSR-1/releases/latest/download/firmware.bin", "offset": 0 }
+        ]
+      }
+    ]
+  }
