@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.9161"
+  version:  "23.11011"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -163,40 +163,11 @@ number:
       still_threshold:
         name: g8 still threshold
 
-  #Temperature Offsets
-  - platform: template
-    name: SCD40 Temperature Offset
-    id: scd40_temperature_offset
-    restore_value: true
-    initial_value: 13.13
-    min_value: -70.0
-    max_value: 70.0
-    entity_category: "CONFIG"
-    unit_of_measurement: "°C"
-    optimistic: true
-    update_interval: never
-    step: 0.1
-    mode: box
-
-  - platform: template
-    name: SCD40 Humidity Offset
-    id: scd40_humidity_offset
-    restore_value: true
-    initial_value: -38.51
-    min_value: -70.0
-    max_value: 70.0
-    entity_category: "CONFIG"
-    unit_of_measurement: "%"
-    optimistic: true
-    update_interval: never
-    step: 0.1
-    mode: box
-
   - platform: template
     name: BME280 Humidity Offset
     id: bme280_humidity_offset
     restore_value: true
-    initial_value: -23.19
+    initial_value: -18.86
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
@@ -210,7 +181,7 @@ number:
     name: BME280 Temperature Offset
     id: bme280_temperature_offset
     restore_value: true
-    initial_value: 7.11
+    initial_value: 14.54
     min_value: -70.0
     max_value: 70.0
     entity_category: "CONFIG"
@@ -389,16 +360,6 @@ sensor:
     co2:
       name: "CO2"
       id: "co2"
-    temperature:
-      name: SCD40 Temperature
-      id: scd40temperature
-      filters:
-        - lambda: return x - id(scd40_temperature_offset).state;
-    humidity:
-      name: SCD40 Humidity
-      id: scd40humidity
-      filters:
-        - lambda: return x - id(scd40_humidity_offset).state;
     automatic_self_calibration: false
     update_interval: 60s
     measurement_mode: "periodic"
@@ -484,31 +445,6 @@ sensor:
     i2c_id: bus_a
     address: 0x76
 
-  - platform: bme280
-    temperature:
-      name: "BME280 Temperature Calibrated"
-      id: bme280temperatureCalibrated
-      filters:
-      - calibrate_linear:
-         datapoints:
-          - 28.19 -> 20.6
-          - 28.28 -> 20.8
-          - 28.02 -> 20.8
-          - 28.33 -> 20.9
-          - 28.28 -> 21.0
-        
-    humidity:
-      name: "BME280 Humidity Calibrated"
-      id: bme280humidityCalibrated
-      filters:
-      - calibrate_linear:
-         datapoints:
-          - 37.59 -> 60.3
-          - 38.99 -> 63.5
-          - 38.69 -> 61.3
-    update_interval: 60s
-    i2c_id: bus_a
-    address: 0x76
   
   - platform: ltr390
     uv:
