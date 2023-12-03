@@ -472,6 +472,7 @@ light:
     method:
       type: esp32_rmt
       channel: 0
+    id: rgb_light
 
 
 
@@ -515,3 +516,15 @@ select:
   - platform: ld2410
     distance_resolution:
       name: "Radar Distance Resolution"
+
+
+interval:
+  - interval: 1s
+    then:
+      - if:
+          condition:
+            - binary_sensor.is_off: ink_ha_connected
+          then:
+            - light.toggle: 
+                id: rgb_light
+
