@@ -21,3 +21,4 @@ Wiki: https://wiki.apolloautomation.cloud
 #### * [CO2_is_too_damn_high.yaml](https://github.com/ApolloAutomation/MSR-1/blob/main/Examples/CO2_is_too_damn_high.yaml) - High CO2 automation that turns LED red when CO2>1500ppm. ####
 #### * [CO2_is_too_damn_high_buzzer.yaml](https://github.com/ApolloAutomation/MSR-1/blob/main/Examples/CO2_is_too_damn_high_buzzer.yaml) - Dangerously high CO2 automation that alerts you with the piezo buzzer when CO2>2000ppm. ####
 #### * [Trash_Night.yaml](https://github.com/ApolloAutomation/MSR-1/blob/main/Examples/Trash_Night.yaml) - LED automation that turns green when it is trash night. ####
+#### * [Holiday](https://github.com/ApolloAutomation/MSR-1/blob/main/Examples/Holiday/automation.yaml) - Holiday animation that flashes red/green and plays Jingle Bells. ####
