@@ -1,0 +1,200 @@
+#From https://shop.apolloautomation.cloud/collections/sensors
+
+views:
+  - title: Home
+    theme: ios-light-mode-blue-red
+    type: panel
+    badges: []
+    cards:
+      - square: false
+        type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-title-card
+                title: Apollo Automation
+                card_mod: null
+                style: |
+                  ha-card {
+                    --primary-text-color: white;
+                  }
+              - type: custom:weather-card
+                entity: weather.home
+              - type: logbook
+                entities:
+                  - binary_sensor.apollo_msr_1_c2cbe8_radar_target
+                title: Motion Events
+                hours_to_show: 4
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-title-card
+                title: Cowork Space
+                card_mod: null
+                style: |
+                  ha-card {
+                    --primary-text-color: white;
+                  }
+              - type: custom:apexcharts-card
+                apex_config:
+                  chart:
+                    height: 200px
+                experimental:
+                  color_threshold: true
+                graph_span: 24h
+                header:
+                  show: true
+                  title: CO2
+                  show_states: true
+                  colorize_states: true
+                series:
+                  - entity: sensor.apollo_air_1_8518b4_co2
+                    type: line
+                    group_by:
+                      func: last
+                      duration: 15m
+                    stroke_width: 5
+                    show:
+                      header_color_threshold: true
+                    color_threshold:
+                      - value: 600
+                        color: green
+                      - value: 700
+                        color: yellow
+                      - value: 900
+                        color: orange
+                      - value: 1000
+                        color: red
+              - type: custom:apexcharts-card
+                apex_config:
+                  chart:
+                    height: 200px
+                experimental:
+                  color_threshold: true
+                graph_span: 24h
+                header:
+                  show: true
+                  title: Air Particulates
+                  show_states: true
+                  colorize_states: true
+                series:
+                  - entity: sensor.apollo_air_1_8518b4_pm_10m_weight_concentration
+                    type: line
+                    group_by:
+                      func: last
+                      duration: 15m
+                    stroke_width: 5
+                    show:
+                      header_color_threshold: true
+                    color_threshold:
+                      - value: 54
+                        color: green
+                      - value: 150
+                        color: yellow
+                      - value: 254
+                        color: orange
+                      - value: 354
+                        color: red
+              - type: custom:apexcharts-card
+                apex_config:
+                  chart:
+                    height: 200px
+                experimental:
+                  color_threshold: true
+                graph_span: 24h
+                header:
+                  show: true
+                  title: Temp / Humidity
+                  show_states: true
+                series:
+                  - entity: sensor.apollo_air_1_8518b4_sen55_temperature
+                    type: line
+                    group_by:
+                      func: last
+                      duration: 15m
+                    stroke_width: 5
+                  - entity: sensor.apollo_air_1_8518b4_sen55_humidity
+                    type: line
+                    group_by:
+                      func: last
+                      duration: 15m
+                    stroke_width: 5
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-title-card
+                title: Lobby
+                card_mod: null
+                style: |
+                  ha-card {
+                    --primary-text-color: white;
+                  }
+              - type: custom:apexcharts-card
+                apex_config:
+                  chart:
+                    height: 200px
+                experimental:
+                  color_threshold: true
+                graph_span: 24h
+                header:
+                  show: true
+                  title: CO2
+                  show_states: true
+                  colorize_states: true
+                series:
+                  - entity: sensor.apollo_msr_1_c2cbe8_co2
+                    type: line
+                    group_by:
+                      func: last
+                      duration: 15m
+                    stroke_width: 5
+                    show:
+                      header_color_threshold: true
+                    color_threshold:
+                      - value: 600
+                        color: green
+                      - value: 700
+                        color: yellow
+                      - value: 900
+                        color: orange
+                      - value: 1000
+                        color: red
+              - square: true
+                type: grid
+                cards:
+                  - show_name: true
+                    show_icon: true
+                    type: button
+                    tap_action:
+                      action: call-service
+                      service: automation.trigger
+                      target:
+                        entity_id: automation.apollo_holiday
+                      data:
+                        skip_condition: true
+                    icon: mdi:pine-tree
+                    name: Holiday
+                  - show_name: true
+                    show_icon: true
+                    type: button
+                    tap_action:
+                      action: toggle
+                    icon: si:darkreader
+                    name: Vader
+                  - show_name: true
+                    show_icon: true
+                    type: button
+                    tap_action:
+                      action: toggle
+                    icon: mdi:mushroom
+                    name: Mario
+                columns: 3
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.apollo_msr_1_c2cbe8_ltr390_light
+                align_icon: left
+                align_state: center
+                show:
+                  labels: true
+                  labels_secondary: true
+                  points: true
+                  extrema: true
+        columns: 3
