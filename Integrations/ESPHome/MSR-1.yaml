@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.12081"
+  version:  "23.12111"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -435,6 +435,7 @@ sensor:
         name: g8 still energy
 
   - platform: bme280
+    id: bme_280
     temperature:
       name: "BME280 Temperature"
       id: bme280temperature
@@ -454,6 +455,7 @@ sensor:
 
   
   - platform: ltr390
+    id: ltr_390
     uv:
       name: "LTR390 UV"
       id: ltr390uv
@@ -471,6 +473,7 @@ sensor:
   
 light:
   - platform: neopixelbus
+    id: rgb_light
     type: GRB
     variant: WS2812x
     pin: GPIO3
@@ -479,7 +482,7 @@ light:
     method:
       type: esp32_rmt
       channel: 0
-    id: rgb_light
+    
 
 
 
