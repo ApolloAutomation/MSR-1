@@ -49,4 +49,12 @@ action:
                 minutes: 0
                 seconds: 0
                 milliseconds: 500
+  - service: light.turn_off
+    target:
+      entity_id:
+        - light.apollo_msr_1_c2cbe8_rgb_light
+        - light.apollo_air_1_8518b4_rgb_light
+      device_id: []
+      area_id: []
+    data: {}
 mode: single
