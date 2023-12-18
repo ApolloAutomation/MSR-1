@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.12111"
+  version:  "23.12181"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -516,6 +516,13 @@ switch:
       id: radar_bluetooth
     engineering_mode:
       name: "Radar Engineering Mode"
+  - platform: template
+    name: "Startup Light Blink"
+    id: startup_light_blink
+    icon: mdi:lightbulb
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    entity_category: "config"
 
 text_sensor:
   - platform: ld2410
@@ -528,6 +535,7 @@ select:
       name: "Radar Distance Resolution"
 
 
+
 #Used To Control RGB Light On Startup. Tells User Status Of Device
 interval:
   - interval: 1s
@@ -536,6 +544,7 @@ interval:
           condition:
             - binary_sensor.is_off: ink_ha_connected
             - lambda: 'return id(cycleCounter) < 30;'
+            - switch.is_on: startup_light_blink
 
           then:
             - light.toggle:
@@ -549,6 +558,7 @@ interval:
             - binary_sensor.is_off: ink_ha_connected
             - lambda: 'return id(cycleCounter) > 30;'
             - lambda: 'return id(cycleCounter) < 31;'
+            - switch.is_on: startup_light_blink
 
           then:
             - light.turn_off:
