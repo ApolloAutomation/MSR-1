@@ -486,11 +486,11 @@ button:
     query_params:
       name: query params
   - platform: template
-    name: "Calibrate SCD40 To 400ppm"
+    name: "Calibrate SCD40 To 420ppm"
     id: set_SCD40_calibrate
     on_press:
       - scd4x.perform_forced_calibration:
-          value: 400
+          value: 420
           id: scd40
 
 
