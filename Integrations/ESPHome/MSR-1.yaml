@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.12181"
+  version:  "24.1.7.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -198,24 +198,6 @@ number:
     step: 0.1
     mode: box
 
-  - platform: template
-    name: Co2 Calibration Number
-    id: co2_calibration_number
-    restore_value: true
-    initial_value: 419.0
-    min_value: 0.0
-    max_value: 1000.0
-    entity_category: "CONFIG"
-    unit_of_measurement: "ppm"
-    optimistic: true
-    mode: box
-    update_interval: never
-    step: 10
-    set_action:
-      - scd4x.perform_forced_calibration:
-          value: !lambda 'return id(co2_calibration_number).state;'
-          id: scd40
-
   # Setting ending of zone 1 occupancy
   - platform: template
     name: "Radar End Zone 1"
@@ -333,13 +315,9 @@ sensor:
       return (id(cpu_speed));
     entity_category: "diagnostic"
 
-  - platform: template
+  - platform: internal_temperature
+    name: "ESP Temperature"
     id: sys_esp_temperature
-    name: ESP Temperature
-    lambda: return temperatureRead();
-    unit_of_measurement: °C
-    device_class: TEMPERATURE
-    update_interval: 60s
 
 
   - platform: uptime
@@ -507,6 +485,13 @@ button:
       name: "Restart Radar"
     query_params:
       name: query params
+  - platform: template
+    name: "Calibrate SCD40 To 400ppm"
+    id: set_SCD40_calibrate
+    on_press:
+      - scd4x.perform_forced_calibration:
+          value: 400
+          id: scd40
 
 
 switch:
