@@ -300,11 +300,8 @@ binary_sensor:
         return false;
       }
 
-    
-
 ld2410:
   id: ld2410_radar
-  
 
 sensor:
   - platform: template
@@ -437,9 +434,11 @@ sensor:
     uv:
       name: "LTR390 UV"
       id: ltr390uv
+      disabled_by_default: true
     light:
       name: "LTR390 Light"
       id: ltr390light
+      disabled_by_default: true
     uv_index:
       name: "LTR390 UV Index"
       id: ltr390uvindex
@@ -518,6 +517,7 @@ select:
   - platform: ld2410
     distance_resolution:
       name: "Radar Distance Resolution"
+    disabled_by_default: true
 
 
 
