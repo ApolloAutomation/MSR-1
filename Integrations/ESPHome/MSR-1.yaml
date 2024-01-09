@@ -210,7 +210,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 10
+    initial_value: 50
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
@@ -226,7 +226,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 36
+    initial_value: 150
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
@@ -242,7 +242,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 100
+    initial_value: 250
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
