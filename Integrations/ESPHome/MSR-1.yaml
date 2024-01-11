@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.1.7.1"
+  version:  "24.1.10.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -517,7 +517,7 @@ select:
   - platform: ld2410
     distance_resolution:
       name: "Radar Distance Resolution"
-    disabled_by_default: true
+      disabled_by_default: true
 
 
 
