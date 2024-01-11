@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "23.12181"
+  version:  "24.1.7.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -198,24 +198,6 @@ number:
     step: 0.1
     mode: box
 
-  - platform: template
-    name: Co2 Calibration Number
-    id: co2_calibration_number
-    restore_value: true
-    initial_value: 419.0
-    min_value: 0.0
-    max_value: 1000.0
-    entity_category: "CONFIG"
-    unit_of_measurement: "ppm"
-    optimistic: true
-    mode: box
-    update_interval: never
-    step: 10
-    set_action:
-      - scd4x.perform_forced_calibration:
-          value: !lambda 'return id(co2_calibration_number).state;'
-          id: scd40
-
   # Setting ending of zone 1 occupancy
   - platform: template
     name: "Radar End Zone 1"
@@ -228,7 +210,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 10
+    initial_value: 50
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
@@ -244,7 +226,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 36
+    initial_value: 150
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
@@ -260,7 +242,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 100
+    initial_value: 250
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
 
@@ -318,11 +300,8 @@ binary_sensor:
         return false;
       }
 
-    
-
 ld2410:
   id: ld2410_radar
-  
 
 sensor:
   - platform: template
@@ -333,13 +312,9 @@ sensor:
       return (id(cpu_speed));
     entity_category: "diagnostic"
 
-  - platform: template
+  - platform: internal_temperature
+    name: "ESP Temperature"
     id: sys_esp_temperature
-    name: ESP Temperature
-    lambda: return temperatureRead();
-    unit_of_measurement: °C
-    device_class: TEMPERATURE
-    update_interval: 60s
 
 
   - platform: uptime
@@ -459,9 +434,11 @@ sensor:
     uv:
       name: "LTR390 UV"
       id: ltr390uv
+      disabled_by_default: true
     light:
       name: "LTR390 Light"
       id: ltr390light
+      disabled_by_default: true
     uv_index:
       name: "LTR390 UV Index"
       id: ltr390uvindex
@@ -507,6 +484,13 @@ button:
       name: "Restart Radar"
     query_params:
       name: query params
+  - platform: template
+    name: "Calibrate SCD40 To 420ppm"
+    id: set_SCD40_calibrate
+    on_press:
+      - scd4x.perform_forced_calibration:
+          value: 420
+          id: scd40
 
 
 switch:
@@ -533,6 +517,7 @@ select:
   - platform: ld2410
     distance_resolution:
       name: "Radar Distance Resolution"
+    disabled_by_default: true
 
 
 
