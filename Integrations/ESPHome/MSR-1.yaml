@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.1.10.1"
+  version:  "24.2.9.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -197,6 +197,22 @@ number:
     update_interval: never
     step: 0.1
     mode: box
+# Setting ending of zone 1 occupancy
+  - platform: template
+    name: "Radar Zone 1 Start"
+    id: radar_z1_start
+    device_class: distance
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 0
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+    unit_of_measurement: "cm"
 
   # Setting ending of zone 1 occupancy
   - platform: template
@@ -213,6 +229,7 @@ number:
     initial_value: 50
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
+    unit_of_measurement: "cm"
 
   # Setting ending of zone 2 occupancy
   - platform: template
@@ -229,6 +246,7 @@ number:
     initial_value: 150
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
+    unit_of_measurement: "cm"
 
   # Setting ending of zone 3 occupancy
   - platform: template
@@ -245,6 +263,7 @@ number:
     initial_value: 250
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
+    unit_of_measurement: "cm"
 
 # Buzzer
 output:
@@ -266,21 +285,25 @@ binary_sensor:
       id: radar_has_target
     has_moving_target:
       name: Radar Moving Target
+      id: radar_has_moving_target
     has_still_target:
       name: Radar Still Target
+      id: radar_has_still_target
   ## Set Up Radar Zones Based On Distance
   - platform: template
     name: "Radar Zone 1 Occupancy"
+    id: radar_zone_1_occupancy
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(radar_has_target).state) && (id(radar_detection_distance).state < id(radar_z1_end).state)) {
+      if ((id(radar_has_target).state) && (id(radar_detection_distance).state < id(radar_z1_end).state) && (id(radar_detection_distance).state > id(radar_z1_start).state){
         return true;
       } else {
         return false;
       }
   - platform: template
     name: "Radar Zone 2 Occupancy"
+    id: radar_zone_2_occupancy
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
@@ -291,6 +314,7 @@ binary_sensor:
       }
   - platform: template
     name: "Radar Zone 3 Occupancy"
+    id: radar_zone_3_occupancy
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
@@ -311,10 +335,12 @@ sensor:
     lambda: |-
       return (id(cpu_speed));
     entity_category: "diagnostic"
+    id: esp_cpu_speed
 
   - platform: internal_temperature
     name: "ESP Temperature"
     id: sys_esp_temperature
+    update_interval: !lambda 'return id(sys_uptime).state'
 
 
   - platform: uptime
@@ -358,8 +384,10 @@ sensor:
       id: still_distance
     moving_energy:
       name: Radar Move Energy
+      id: radar_moving_energy
     still_energy:
       name: Radar Still Energy
+      id: radar_still_energy
     detection_distance:
       name: Radar Detection Distance
       id: radar_detection_distance
@@ -512,6 +540,13 @@ text_sensor:
   - platform: ld2410
     version:
       name: "Radar Firmware Version"
+  - platform: template
+    name: "Apollo Firmware"
+    id: apollo_firmware
+    entity_category: "config"
+    update_interval: never
+    lambda: |-
+      return ${version}
 
 select:
   - platform: ld2410
