@@ -409,7 +409,7 @@ sensor:
       still_energy:
         name: g8 still energy
 
-  - platform: bme280
+  - platform: bme280_i2c
     id: bme_280
     temperature:
       name: "BME280 Temperature"
