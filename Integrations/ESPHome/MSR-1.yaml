@@ -23,7 +23,7 @@ esphome:
     name: "ApolloAutomation.MSR-1"
     version: "${version}"
 
-  min_version: 2023.8.1
+  min_version: 2024.2.0
 
 # Define Board
 esp32:
@@ -197,7 +197,7 @@ number:
     update_interval: never
     step: 0.1
     mode: box
-# Setting ending of zone 1 occupancy
+# Setting start of zone 1 occupancy
   - platform: template
     name: "Radar Zone 1 Start"
     id: radar_z1_start
@@ -296,7 +296,7 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(radar_has_target).state) && (id(radar_detection_distance).state < id(radar_z1_end).state) && (id(radar_detection_distance).state > id(radar_z1_start).state){
+      if ((id(radar_has_target).state) && ((id(radar_detection_distance).state < id(radar_z1_end).state) && (id(radar_detection_distance).state > id(radar_z1_start).state))){
         return true;
       } else {
         return false;
@@ -340,7 +340,6 @@ sensor:
   - platform: internal_temperature
     name: "ESP Temperature"
     id: sys_esp_temperature
-    update_interval: !lambda 'return id(sys_uptime).state'
 
 
   - platform: uptime
@@ -437,7 +436,7 @@ sensor:
       still_energy:
         name: g8 still energy
 
-  - platform: bme280
+  - platform: bme280_i2c
     id: bme_280
     temperature:
       name: "BME280 Temperature"
@@ -540,13 +539,6 @@ text_sensor:
   - platform: ld2410
     version:
       name: "Radar Firmware Version"
-  - platform: template
-    name: "Apollo Firmware"
-    id: apollo_firmware
-    entity_category: "config"
-    update_interval: never
-    lambda: |-
-      return ${version}
 
 select:
   - platform: ld2410
