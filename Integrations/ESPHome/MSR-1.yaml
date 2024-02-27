@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.2.20.1"
+  version:  "24.2.21.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -323,6 +323,21 @@ binary_sensor:
       } else {
         return false;
       }
+  - platform: gpio
+    pin: GPIO9 
+    id: reset_button
+    on_press:
+      then:
+        - lambda: |-
+            id(press_timer).start();
+    on_release:
+      then:
+        - lambda: |-
+            if (id(press_timer).stop() >= 5000) {
+              //Erase Wifi
+              ESP.eraseConfig();
+              ESP.restart();
+            }
 
 ld2410:
   id: ld2410_radar
@@ -576,3 +591,8 @@ interval:
             - light.turn_off:
                 id: rgb_light
             - lambda: 'id(cycleCounter) += 1;'
+  - interval: 1s
+    id: press_timer
+    then:
+      - lambda: |-
+          // This is a placeholder to keep track of the button press duration.
