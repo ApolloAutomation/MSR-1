@@ -203,7 +203,7 @@ number:
     id: radar_z1_start
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -220,7 +220,7 @@ number:
     id: radar_z1_end
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -237,7 +237,7 @@ number:
     id: radar_z2_end
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -254,7 +254,7 @@ number:
     id: radar_z3_end
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
