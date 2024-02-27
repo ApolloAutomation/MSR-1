@@ -503,12 +503,6 @@ light:
       channel: 0
     
 
-
-
-time:
-  - platform: sntp
-    id: time_sntp
-
 button:
   - platform: restart
     icon: mdi:power-cycle
