@@ -45,6 +45,10 @@ globals:
     type: int
     restore_value: no
     initial_value: '0'
+  - id: button_press_timestamp
+    type: unsigned long
+    restore_value: no
+    initial_value: '0'
 
 # Enable Home Assistant API
 # Also Add Buzzer Service Connection
@@ -329,12 +333,12 @@ binary_sensor:
     on_press:
       then:
         - lambda: |-
-            id(press_timer).start();
+            id(button_press_timestamp) = millis();
     on_release:
       then:
         - lambda: |-
-            if (id(press_timer).stop() >= 5000) {
-              //Erase Wifi
+            if (millis() - id(button_press_timestamp) >= 5000) {
+              // Remove Wifi
               ESP.eraseConfig();
               ESP.restart();
             }
@@ -585,8 +589,3 @@ interval:
             - light.turn_off:
                 id: rgb_light
             - lambda: 'id(cycleCounter) += 1;'
-  - interval: 1s
-    id: press_timer
-    then:
-      - lambda: |-
-          // This is a placeholder to keep track of the button press duration.
