@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.2.21.1"
+  version:  "24.3.1.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -46,8 +46,8 @@ globals:
     restore_value: no
     initial_value: '0'
   - id: button_press_timestamp
-    type: unsigned long
     restore_value: no
+    type: uint32_t
     initial_value: '0'
 
 # Enable Home Assistant API
@@ -328,19 +328,25 @@ binary_sensor:
         return false;
       }
   - platform: gpio
-    pin: GPIO9 
+    pin: 
+      number: GPIO9
+      inverted: true
+      mode:
+        input: true
+        pullup: true
     id: reset_button
     on_press:
       then:
         - lambda: |-
             id(button_press_timestamp) = millis();
+            
     on_release:
       then:
         - lambda: |-
             if (millis() - id(button_press_timestamp) >= 5000) {
               // Remove Wifi
-              ESP.eraseConfig();
-              ESP.restart();
+              id(factory_reset_switch).turn_on();
+              
             }
 
 ld2410:
@@ -547,6 +553,9 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     optimistic: true
     entity_category: "config"
+  - platform: factory_reset
+    id: factory_reset_switch
+    internal: true
 
 text_sensor:
   - platform: ld2410
