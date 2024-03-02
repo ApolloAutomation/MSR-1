@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.2.20.1"
+  version:  "24.3.1.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -44,6 +44,10 @@ globals:
   - id: cycleCounter
     type: int
     restore_value: no
+    initial_value: '0'
+  - id: button_press_timestamp
+    restore_value: no
+    type: uint32_t
     initial_value: '0'
 
 # Enable Home Assistant API
@@ -203,7 +207,7 @@ number:
     id: radar_z1_start
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -220,7 +224,7 @@ number:
     id: radar_z1_end
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -237,7 +241,7 @@ number:
     id: radar_z2_end
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -254,7 +258,7 @@ number:
     id: radar_z3_end
     device_class: distance
     min_value: 0
-    max_value: 600
+    max_value: 800
     step: 1
     mode: box
     update_interval: never
@@ -323,6 +327,27 @@ binary_sensor:
       } else {
         return false;
       }
+  - platform: gpio
+    pin: 
+      number: GPIO9
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    id: reset_button
+    on_press:
+      then:
+        - lambda: |-
+            id(button_press_timestamp) = millis();
+            
+    on_release:
+      then:
+        - lambda: |-
+            if (millis() - id(button_press_timestamp) >= 5000) {
+              // Remove Wifi
+              id(factory_reset_switch).turn_on();
+              
+            }
 
 ld2410:
   id: ld2410_radar
@@ -488,12 +513,6 @@ light:
       channel: 0
     
 
-
-
-time:
-  - platform: sntp
-    id: time_sntp
-
 button:
   - platform: restart
     icon: mdi:power-cycle
@@ -534,6 +553,9 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     optimistic: true
     entity_category: "config"
+  - platform: factory_reset
+    id: factory_reset_switch
+    internal: true
 
 text_sensor:
   - platform: ld2410
