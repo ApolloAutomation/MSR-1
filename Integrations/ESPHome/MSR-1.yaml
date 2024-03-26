@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.3.21.1"
+  version:  "24.3.26.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -462,10 +462,10 @@ sensor:
     uv_index:
       name: "LTR390 UV Index"
       id: ltr390uvindex
-    ambient_light:
-      name: "LTR390 Ambient Light"
-      id: ltr390ambientlight
-    update_interval: 60s
+    light:
+      name: "LTR390 Light"
+      id: ltr390light
+    update_interval: 5s
 
   
 light:
