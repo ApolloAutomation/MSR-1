@@ -28,7 +28,7 @@ esphome:
 esp32:
   board: esp32-c3-devkitm-1
   framework:
-    type: arduino
+    type: esp-idf
   
 dashboard_import:
   package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
@@ -469,16 +469,14 @@ sensor:
 
   
 light:
-  - platform: neopixelbus
+  - platform: esp32_rmt_led_strip
     id: rgb_light
-    type: GRB
-    variant: WS2812x
+    name: "RGB Light"
     pin: GPIO3
     num_leds: 1
-    name: "RGB Light"
-    method:
-      type: esp32_rmt
-      channel: 0
+    rmt_channel: 0
+    rgb_order: GRB
+    chipset: ws2812
     
 
 button:
