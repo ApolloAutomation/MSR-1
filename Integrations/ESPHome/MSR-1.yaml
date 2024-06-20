@@ -80,8 +80,11 @@ api:
 
 
 ota:
-  password: "apolloautomation"
-  safe_mode: false
+  - platform: esphome
+    password: "apolloautomation"
+    
+safe_mode:
+  disabled: true
 
 wifi:
 
