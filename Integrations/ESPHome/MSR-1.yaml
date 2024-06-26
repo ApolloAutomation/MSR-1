@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.6.20.1"
+  version:  "24.6.26.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -325,6 +325,7 @@ binary_sensor:
     pin: 
       number: GPIO9
       inverted: true
+      ignore_strapping_warning: true
       mode:
         input: true
         pullup: true
