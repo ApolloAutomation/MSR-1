@@ -97,16 +97,10 @@ update:
     name: Firmware Update
     source: https://apolloautomation.github.io/MSR-1/artifact/manifest.json
 
-improv_serial:
 
-esp32_improv:
-  authorizer: none
 
 
 wifi:
-  on_connect:
-    - delay: 5s  # Gives time for improv results to be transmitted
-    - ble.disable:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -118,7 +112,6 @@ captive_portal:
 web_server:
   port: 80
   
-logger:
 
 
 # Set Up Key Ports For Communication
