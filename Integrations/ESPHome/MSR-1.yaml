@@ -325,6 +325,7 @@ binary_sensor:
     pin: 
       number: GPIO9
       inverted: true
+      ignore_strapping_warning: true
       mode:
         input: true
         pullup: true
