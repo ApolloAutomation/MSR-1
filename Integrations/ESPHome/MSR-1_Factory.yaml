@@ -19,21 +19,42 @@ esphome:
   min_version: 2024.6.4
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1_BLE.yaml
+  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1_Factory.yaml
   import_full_config: false
 
-ota:
-  - platform: esphome
-    password: "apolloautomation"
+improv_serial:
 
+esp32_improv:
+  authorizer: none
 
 wifi:
-  power_save_mode: none
+  on_connect:
+    - delay: 5s  
+    - ble.disable:
+  on_disconnect:
+    - ble.enable:
   ap:
     ssid: "Apollo MSR1 Hotspot"
 
-bluetooth_proxy:
-  active: true
+logger:
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+  - platform: http_request
+    id: ota_managed
+
+http_request:
+  verify_ssl: true
+
+update:
+  - platform: http_request
+    id: firmware_update
+    name: Firmware Update
+    source: https://apolloautomation.github.io/MSR-1/artifact/manifest.json
+
+
+safe_mode:
 
 packages:
   remote_package:
