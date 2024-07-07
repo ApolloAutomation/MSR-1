@@ -38,7 +38,7 @@ bluetooth_proxy:
 packages:
   remote_package:
     url: https://github.com/ApolloAutomation/MSR-1/
-    ref: SplitYAML
+    ref: main
     files:
       - Integrations/ESPHome/Core.yaml
     refresh: 0d
