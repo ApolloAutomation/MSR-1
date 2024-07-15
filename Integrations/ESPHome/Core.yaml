@@ -1,52 +1,17 @@
-#Define Project
 substitutions:
   name: apollo-msr-1
   version:  "24.7.15.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
-  
-esphome:
-  name: "${name}"
-  friendly_name: Apollo Multisensor Mk1 (MSR-1)
-  comment: Apollo Multisensor Mk1 (MSR-1)
-  name_add_mac_suffix: true
-  platformio_options:
-    board_build.flash_mode: dio
 
-  on_boot:
-  - priority: 900.0
-    then:
-      - lambda: |-
-          id(radar_bluetooth).turn_off();
-
-  project:
-    name: "ApolloAutomation.MSR-1"
-    version: "${version}"
-
-  min_version: 2024.6.0
-
-# Define Board
 esp32:
   board: esp32-c3-devkitm-1
   framework:
     type: arduino
-  
-dashboard_import:
-  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
-  import_full_config: false
+captive_portal:
 
+web_server:
+  port: 80
 
-globals:
-  - id: cycleCounter
-    type: int
-    restore_value: no
-    initial_value: '0'
-  - id: button_press_timestamp
-    restore_value: no
-    type: uint32_t
-    initial_value: '0'
-
-# Enable Home Assistant API
-# Also Add Buzzer Service Connection
 api:
   on_client_connected:
     - delay: 1s
@@ -78,29 +43,16 @@ api:
             id: ld2410_radar
             password: !lambda 'return password;'
 
+globals:
+  - id: cycleCounter
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: button_press_timestamp
+    restore_value: no
+    type: uint32_t
+    initial_value: '0'
 
-ota:
-  - platform: esphome
-    password: "apolloautomation"
-
-
-wifi:
-
-  power_save_mode: none
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Apollo MSR1 Hotspot"
-
-captive_portal:
-
-
-web_server:
-  port: 80
-
-
-
-# Set Up Key Ports For Communication
 i2c:
   sda: GPIO1
   scl: GPIO0
@@ -113,7 +65,6 @@ uart:
   parity: NONE
   stop_bits: 1
 
-# Numbers For Configuration
 number:
   - platform: ld2410
     timeout:
