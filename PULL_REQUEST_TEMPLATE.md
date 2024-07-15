@@ -10,4 +10,4 @@ Breaks:
 
 Checks:
 - [ ] Documentation Updated
-- [ ] Build Number Incremented In MSR-1.yaml
+- [ ] Build Number Incremented In Core.yaml
