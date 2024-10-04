@@ -28,7 +28,6 @@ ota:
 
 
 wifi:
-  power_save_mode: none
   ap:
     ssid: "Apollo MSR1 Hotspot"
 
