@@ -662,14 +662,6 @@ sensor:
 
 
   # Button to reset the max value of g0_still_energy
-  - platform: template
-    name: "Reset Max Energy"
-    id: reset_max_energy
-    on_press:
-    then:
-      - lambda: |-
-          id(max_g0_still_energy).publish_state(0.0);
-          id(max_g0_move_energy).publish_state(0.0);
 
 
   - platform: bme280_i2c
@@ -740,6 +732,15 @@ button:
       - scd4x.perform_forced_calibration:
           value: 420
           id: scd40
+  - platform: template
+    name: "Reset Max Energy"
+    id: reset_max_energy
+    on_press:
+    then:
+      - lambda: |-
+          id(max_g0_still_energy).publish_state(0.0);
+          id(max_g0_move_energy).publish_state(0.0);
+
 
 
 switch:
