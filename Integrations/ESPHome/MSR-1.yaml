@@ -31,7 +31,7 @@ esp32:
     type: arduino
   
 dashboard_import:
-  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
+  package_import_url: github://hellosamblack/MSR-1/Integrations/ESPHome/MSR-1.yaml
   import_full_config: false
 
 
@@ -52,6 +52,19 @@ api:
     - delay: 1s
     - light.turn_off: rgb_light
     - lambda: 'id(cycleCounter) = 30;'
+    #https://github.com/agittins/bermuda/wiki/ESPHome-Configurations
+    # Only enable BLE tracking when wifi is up and api is connected
+    # Gives single-core ESP32-C3 devices time to manage wifi and authenticate with api
+    - esp32_ble_tracker.start_scan:
+        continuous: true
+  # Disable BLE tracking when there are no api connections live
+  on_client_disconnected:
+    if:
+      condition:
+        not:
+          api.connected:
+      then:
+        - esp32_ble_tracker.stop_scan:
   services:
     - service: play_buzzer
       variables:
@@ -124,49 +137,67 @@ number:
       name: Radar Max Still Distance
     g0:
       move_threshold:
-        name: g0 move threshold
+        name: G0 Move Threshold
+        id: g0_move_threshold
       still_threshold:
-        name: g0 still threshold
+        name: G0 Still Threshold
+        id: g0_still_threshold
     g1:
       move_threshold:
-        name: g1 move threshold
+        name: G1 Move Threshold
+        id: g1_move_threshold
       still_threshold:
-        name: g1 still threshold
+        name: G1 Still Threshold
+        id: g1_still_threshold
     g2:
       move_threshold:
-        name: g2 move threshold
+        name: G2 Move Threshold
+        id: g2_move_threshold
       still_threshold:
-        name: g2 still threshold
+        name: G2 Still Threshold
+        id: g2_still_threshold
     g3:
       move_threshold:
-        name: g3 move threshold
+        name: G3 Move Threshold
+        id: g3_move_threshold
       still_threshold:
-        name: g3 still threshold
+        name: G3 Still Threshold
+        id: g3_still_threshold
     g4:
       move_threshold:
-        name: g4 move threshold
+        name: G4 Move Threshold
+        id: g4_move_threshold
       still_threshold:
-        name: g4 still threshold
+        name: G4 Still Threshold
+        id: g4_still_threshold
     g5:
       move_threshold:
-        name: g5 move threshold
+        name: G5 Move Threshold
+        id: g5_move_threshold
       still_threshold:
-        name: g5 still threshold
+        name: G5 Still Threshold
+        id: g5_still_threshold
     g6:
       move_threshold:
-        name: g6 move threshold
+        name: G6 Move Threshold
+        id: g6_move_threshold
       still_threshold:
-        name: g6 still threshold
+        name: G6 Still Threshold
+        id: g6_still_threshold
     g7:
       move_threshold:
-        name: g7 move threshold
+        name: G7 Move Threshold
+        id: g7_move_threshold
       still_threshold:
-        name: g7 still threshold
+        name: G7 Still Threshold
+        id: g7_still_threshold
     g8:
       move_threshold:
-        name: g8 move threshold
+        name: G8 Move Threshold
+        id: g8_move_threshold
       still_threshold:
-        name: g8 still threshold
+        name: G8 Still Threshold
+        id: g8_still_threshold
 
   - platform: template
     name: BME280 Humidity Offset

@@ -17,6 +17,19 @@ api:
     - delay: 1s
     - light.turn_off: rgb_light
     - lambda: 'id(cycleCounter) = 30;'
+    #https://github.com/agittins/bermuda/wiki/ESPHome-Configurations
+    # Only enable BLE tracking when wifi is up and api is connected
+    # Gives single-core ESP32-C3 devices time to manage wifi and authenticate with api
+    - esp32_ble_tracker.start_scan:
+        continuous: true
+  # Disable BLE tracking when there are no api connections live
+  on_client_disconnected:
+    if:
+      condition:
+        not:
+          api.connected:
+      then:
+        - esp32_ble_tracker.stop_scan:
   services:
     - service: play_buzzer
       variables:
@@ -65,6 +78,7 @@ uart:
   parity: NONE
   stop_bits: 1
 
+# Numbers For Configuration
 number:
   - platform: ld2410
     timeout:
@@ -75,49 +89,67 @@ number:
       name: Radar Max Still Distance
     g0:
       move_threshold:
-        name: g0 move threshold
+        name: G0 Move Threshold
+        id: g0_move_threshold
       still_threshold:
-        name: g0 still threshold
+        name: G0 Still Threshold
+        id: g0_still_threshold
     g1:
       move_threshold:
-        name: g1 move threshold
+        name: G1 Move Threshold
+        id: g1_move_threshold
       still_threshold:
-        name: g1 still threshold
+        name: G1 Still Threshold
+        id: g1_still_threshold
     g2:
       move_threshold:
-        name: g2 move threshold
+        name: G2 Move Threshold
+        id: g2_move_threshold
       still_threshold:
-        name: g2 still threshold
+        name: G2 Still Threshold
+        id: g2_still_threshold
     g3:
       move_threshold:
-        name: g3 move threshold
+        name: G3 Move Threshold
+        id: g3_move_threshold
       still_threshold:
-        name: g3 still threshold
+        name: G3 Still Threshold
+        id: g3_still_threshold
     g4:
       move_threshold:
-        name: g4 move threshold
+        name: G4 Move Threshold
+        id: g4_move_threshold
       still_threshold:
-        name: g4 still threshold
+        name: G4 Still Threshold
+        id: g4_still_threshold
     g5:
       move_threshold:
-        name: g5 move threshold
+        name: G5 Move Threshold
+        id: g5_move_threshold
       still_threshold:
-        name: g5 still threshold
+        name: G5 Still Threshold
+        id: g5_still_threshold
     g6:
       move_threshold:
-        name: g6 move threshold
+        name: G6 Move Threshold
+        id: g6_move_threshold
       still_threshold:
-        name: g6 still threshold
+        name: G6 Still Threshold
+        id: g6_still_threshold
     g7:
       move_threshold:
-        name: g7 move threshold
+        name: G7 Move Threshold
+        id: g7_move_threshold
       still_threshold:
-        name: g7 still threshold
+        name: G7 Still Threshold
+        id: g7_still_threshold
     g8:
       move_threshold:
-        name: g8 move threshold
+        name: G8 Move Threshold
+        id: g8_move_threshold
       still_threshold:
-        name: g8 still threshold
+        name: G8 Still Threshold
+        id: g8_still_threshold
 
   - platform: template
     name: BME280 Humidity Offset
@@ -321,6 +353,10 @@ sensor:
     co2:
       name: "CO2"
       id: "co2"
+      filters:
+        - sliding_window_moving_average:
+            window_size: 15
+            send_every: 1
     automatic_self_calibration: false
     update_interval: 60s
     measurement_mode: "periodic"
@@ -346,62 +382,247 @@ sensor:
       id: radar_detection_distance
     g0:
       move_energy:
-        name: g0 move energy
+        name: G0 Move Energy
+        id: g0_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g0 still energy
+        name: G0 Still Energy
+        id: g0_still_energy
+        state_class: measurement
+        internal: true
     g1:
       move_energy:
-        name: g1 move energy
+        name: G1 Move Energy
+        id: g1_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g1 still energy
+        name: G1 Still Energy
+        id: g1_still_energy
+        state_class: measurement
+        internal: true
     g2:
       move_energy:
-        name: g2 move energy
+        name: G2 Move Energy
+        id: g2_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g2 still energy
+        name: G2 Still Energy
+        id: g2_still_energy
+        state_class: measurement
+        internal: true
     g3:
       move_energy:
-        name: g3 move energy
+        name: G3 Move Energy
+        id: g3_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g3 still energy
+        name: G3 Still Energy
+        id: g3_still_energy
+        state_class: measurement
+        internal: true
     g4:
       move_energy:
-        name: g4 move energy
+        name: G4 Move Energy
+        id: g4_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g4 still energy
+        name: G4 Still Energy
+        id: g4_still_energy
+        state_class: measurement
+        internal: true
     g5:
       move_energy:
-        name: g5 move energy
+        name: G5 Move Energy
+        id: g5_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g5 still energy
+        name: G5 Still Energy
+        id: g5_still_energy
+        state_class: measurement
+        internal: true
     g6:
       move_energy:
-        name: g6 move energy
+        name: G6 Move Energy
+        id: g6_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g6 still energy
+        name: G6 Still Energy
+        id: g6_still_energy
+        state_class: measurement
+        internal: true
     g7:
       move_energy:
-        name: g7 move energy
+        name: G7 Move Energy
+        id: g7_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g7 still energy
+        name: G7 Still Energy
+        id: g7_still_energy
+        state_class: measurement
+        internal: true
     g8:
       move_energy:
-        name: g8 move energy
+        name: G8 Move Energy
+        id: g8_move_energy
+        state_class: measurement
+        internal: true
       still_energy:
-        name: g8 still energy
+        name: G8 Still Energy
+        id: g8_still_energy
+        state_class: measurement
+        internal: true
+
+  - platform: template
+    name: "Motion Gate Number"
+    state_class: measurement
+    accuracy_decimals: 0
+    entity_category: ""
+    lambda: |-
+      // Array of gate energies (you can use move_energy or still_energy, adjust as needed)
+      float gate_energies[9] = {
+          id(g0_move_energy).state,
+          id(g1_move_energy).state,
+          id(g2_move_energy).state,
+          id(g3_move_energy).state,
+          id(g4_move_energy).state,
+          id(g5_move_energy).state,
+          id(g6_move_energy).state,
+          id(g7_move_energy).state,
+          id(g8_move_energy).state
+      };
+      
+      // Variable to track the largest energy and its index
+      float max_energy = -1.0;
+      int max_index = -1;
+
+      for (int i = 0; i < 9; i++) {
+        if (gate_energies[i] > max_energy) {
+          max_energy = gate_energies[i];
+          max_index = i;
+        }
+      }
+      return max_index;
+    update_interval: 1s
+  
+  - platform: template
+    name: "Motion Gate Energy"
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: ""
+    lambda: |-
+        // Array of gate energies
+        float gate_energies[9] = {
+          id(g0_move_energy).state,
+          id(g1_move_energy).state,
+          id(g2_move_energy).state,
+          id(g3_move_energy).state,
+          id(g4_move_energy).state,
+          id(g5_move_energy).state,
+          id(g6_move_energy).state,
+          id(g7_move_energy).state,
+          id(g8_move_energy).state
+        };
+
+        // Variable to track the largest energy
+        float max_energy = -1.0;
+
+        for (int i = 0; i < 9; i++) {
+          if (gate_energies[i] > max_energy) {
+            max_energy = gate_energies[i];
+          }
+        }
+
+        // Return the maximum energy
+        return max_energy;
+    update_interval: 1s
+
+  - platform: template
+    name: "Still Gate Number"
+    state_class: measurement
+    accuracy_decimals: 0
+    entity_category: ""
+    lambda: |-
+      // Array of gate energies (you can use move_energy or still_energy, adjust as needed)
+      float gate_energies[9] = {
+          id(g0_still_energy).state,
+          id(g1_still_energy).state,
+          id(g2_still_energy).state,
+          id(g3_still_energy).state,
+          id(g4_still_energy).state,
+          id(g5_still_energy).state,
+          id(g6_still_energy).state,
+          id(g7_still_energy).state,
+          id(g8_still_energy).state
+      };
+      
+      // Variable to track the largest energy and its index
+      float max_energy = -1.0;
+      int max_index = -1;
+
+      for (int i = 0; i < 9; i++) {
+        if (gate_energies[i] > max_energy) {
+          max_energy = gate_energies[i];
+          max_index = i;
+        }
+      }
+      return max_index;
+    update_interval: 1s
+  
+  - platform: template
+    name: "Still Gate Energy"
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: ""
+    lambda: |-
+        // Array of gate energies
+        float gate_energies[9] = {
+          id(g0_still_energy).state,
+          id(g1_still_energy).state,
+          id(g2_still_energy).state,
+          id(g3_still_energy).state,
+          id(g4_still_energy).state,
+          id(g5_still_energy).state,
+          id(g6_still_energy).state,
+          id(g7_still_energy).state,
+          id(g8_still_energy).state
+        };
+
+        // Variable to track the largest energy
+        float max_energy = -1.0;
+
+        for (int i = 0; i < 9; i++) {
+          if (gate_energies[i] > max_energy) {
+            max_energy = gate_energies[i];
+          }
+        }
+
+        // Return the maximum energy
+        return max_energy;
+    update_interval: 1s
+
 
   - platform: bme280_i2c
     id: bme_280
     temperature:
-      name: "BME280 Temperature"
+      name: "Temperature"
       id: bme280temperature
       filters:
         - lambda: return x - id(bme280_temperature_offset).state;
     pressure:
-      name: "BME280 Pressure"
+      name: "Pressure"
       id: bme280pressure
     humidity:
-      name: "BME280 Humidity"
+      name: "Humidity"
       id: bme280humidity
       filters:
         - lambda: return x - id(bme280_humidity_offset).state;
@@ -413,10 +634,10 @@ sensor:
   - platform: ltr390
     id: ltr_390
     uv_index:
-      name: "LTR390 UV Index"
+      name: "UV Index"
       id: ltr390uvindex
     light:
-      name: "LTR390 Light"
+      name: "Ambient Light"
       id: ltr390light
     update_interval: 5s
 

@@ -19,13 +19,17 @@ esphome:
   min_version: 2024.6.4
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1_BLE.yaml
+  package_import_url: github://hellosamblack/MSR-1/Integrations/ESPHome/MSR-1_BLE.yaml
   import_full_config: false
 
 ota:
   - platform: esphome
     password: "apolloautomation"
 
+logger:
+  #level: INFO
+  #https://github.com/agittins/bermuda/wiki/ESPHome-Configurations
+  baud_rate: 0  # 0 Enables logging, but disables serial-port logging to free CPU and memory
 
 wifi:
   power_save_mode: none
@@ -37,7 +41,7 @@ bluetooth_proxy:
 
 packages:
   remote_package:
-    url: https://github.com/ApolloAutomation/MSR-1/
+    url: https://github.com/hellosamblack/MSR-1/
     ref: main
     files:
       - Integrations/ESPHome/Core.yaml
