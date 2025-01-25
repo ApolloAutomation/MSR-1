@@ -638,9 +638,7 @@ sensor:
     entity_category: "diagnostic"
     update_interval: 1s
     lambda: |-
-      if (isnan(id(g0_still_max_energy).state)) {
-        return 0.0;
-      } else if (id(g0_still_energy).state > id(g0_still_max_energy).state) {
+      if (id(g0_still_energy).state > id(g0_still_max_energy).state) {
         return id(g0_still_energy).state;
       } else {
         return id(g0_still_max_energy).state;
@@ -655,9 +653,7 @@ sensor:
     entity_category: "diagnostic"
     update_interval: 1s
     lambda: |-
-      if (isnan(id(g0_move_max_energy).state)) {
-        return 0.0;
-      } else if (id(g0_move_energy).state > id(g0_move_max_energy).state) {
+      if (id(g0_move_energy).state > id(g0_move_max_energy).state) {
         return id(g0_move_energy).state;
       } else {
         return id(g0_move_max_energy).state;
@@ -755,6 +751,12 @@ switch:
       id: radar_bluetooth
     engineering_mode:
       name: "Radar Engineering Mode"
+      id: radar_engineering_mode
+      on_turn_on:
+        then:
+          - lambda: |-
+              id(g0_still_max_energy).publish_state(0.0);
+              id(g0_move_max_energy).publish_state(0.0);
   - platform: template
     name: "Startup Light Blink"
     id: startup_light_blink
