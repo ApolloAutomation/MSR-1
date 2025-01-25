@@ -391,7 +391,7 @@ sensor:
           above: 0.0
           then:
             - lambda: |- 
-                id(max_g0_move_energy).publish_state(id(g0_move_energy).state);
+                id(g0_max_move_energy).publish_state(id(g0_move_energy).state);
       still_energy:
         name: G0 Still Energy
         id: g0_still_energy
@@ -402,7 +402,7 @@ sensor:
           above: 0.0
           then:
             - lambda: |- 
-                id(max_g0_still_energy).publish_state(id(g0_still_energy).state);
+                id(g0_max_still_energy).publish_state(id(g0_still_energy).state);
     g1:
       move_energy:
         name: G1 Move Energy
@@ -640,25 +640,25 @@ sensor:
 
   # Track the max value of g0_still_energy
   - platform: template
-    name: "Max G0 Still Energy"
-    id: max_g0_still_energy
+    name: "G0 Max Still Energy"
+    id: g0_max_still_energy
     state_class: measurement
     unit_of_measurement: "%"
     accuracy_decimals: 0
     entity_category: "diagnostic"
     update_interval: 1s
-    lambda: |-
-      return 0.0;
+    # lambda: |-
+    #   return 0.0;
   - platform: template
-    name: "Max G0 Move Energy"
-    id: max_g0_move_energy
+    name: "G0 Max Move Energy"
+    id: g0_max_move_energy
     state_class: measurement
     unit_of_measurement: "%"
     accuracy_decimals: 0
     entity_category: "diagnostic"
     update_interval: 1s
-    lambda: |-
-      return 0.0;
+    # lambda: |-
+    #   return 0.0;
 
 
   # Button to reset the max value of g0_still_energy
@@ -735,6 +735,7 @@ button:
   - platform: template
     name: "Reset Max Energy"
     id: reset_max_energy
+    entity_category: "diagnostic"
     on_press:
       then:
         - lambda: |-
