@@ -627,8 +627,7 @@ sensor:
         // Return the maximum energy
         return max_energy;
     update_interval: 1s
-
-  # Track the max value of g0_still_energy
+    # Track the max value of g0_still_energy
   - platform: template
     name: "G0 Still Max Energy"
     id: g0_still_max_energy
@@ -657,6 +656,254 @@ sensor:
         return id(g0_move_energy).state;
       } else {
         return id(g0_move_max_energy).state;
+      }
+
+  # Track the max value of g1_still_energy
+  - platform: template
+    name: "G1 Still Max Energy"
+    id: g1_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g1_still_energy).state > id(g1_still_max_energy).state) {
+        return id(g1_still_energy).state;
+      } else {
+        return id(g1_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G1 Move Max Energy"
+    id: g1_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g1_move_energy).state > id(g1_move_max_energy).state) {
+        return id(g1_move_energy).state;
+      } else {
+        return id(g1_move_max_energy).state;
+      }
+
+  # Track the max value of g2_still_energy
+  - platform: template
+    name: "G2 Still Max Energy"
+    id: g2_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g2_still_energy).state > id(g2_still_max_energy).state) {
+        return id(g2_still_energy).state;
+      } else {
+        return id(g2_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G2 Move Max Energy"
+    id: g2_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g2_move_energy).state > id(g2_move_max_energy).state) {
+        return id(g2_move_energy).state;
+      } else {
+        return id(g2_move_max_energy).state;
+      }
+
+  # Track the max value of g3_still_energy
+  - platform: template
+    name: "G3 Still Max Energy"
+    id: g3_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g3_still_energy).state > id(g3_still_max_energy).state) {
+        return id(g3_still_energy).state;
+      } else {
+        return id(g3_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G3 Move Max Energy"
+    id: g3_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g3_move_energy).state > id(g3_move_max_energy).state) {
+        return id(g3_move_energy).state;
+      } else {
+        return id(g3_move_max_energy).state;
+      }
+
+  # Track the max value of g4_still_energy
+  - platform: template
+    name: "G4 Still Max Energy"
+    id: g4_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g4_still_energy).state > id(g4_still_max_energy).state) {
+        return id(g4_still_energy).state;
+      } else {
+        return id(g4_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G4 Move Max Energy"
+    id: g4_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g4_move_energy).state > id(g4_move_max_energy).state) {
+        return id(g4_move_energy).state;
+      } else {
+        return id(g4_move_max_energy).state;
+      }
+
+  # Track the max value of g5_still_energy
+  - platform: template
+    name: "G5 Still Max Energy"
+    id: g5_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g5_still_energy).state > id(g5_still_max_energy).state) {
+        return id(g5_still_energy).state;
+      } else {
+        return id(g5_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G5 Move Max Energy"
+    id: g5_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g5_move_energy).state > id(g5_move_max_energy).state) {
+        return id(g5_move_energy).state;
+      } else {
+        return id(g5_move_max_energy).state;
+      }
+
+  # Track the max value of g6_still_energy
+  - platform: template
+    name: "G6 Still Max Energy"
+    id: g6_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g6_still_energy).state > id(g6_still_max_energy).state) {
+        return id(g6_still_energy).state;
+      } else {
+        return id(g6_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G6 Move Max Energy"
+    id: g6_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g6_move_energy).state > id(g6_move_max_energy).state) {
+        return id(g6_move_energy).state;
+      } else {
+        return id(g6_move_max_energy).state;
+      }
+
+  # Track the max value of g7_still_energy
+  - platform: template
+    name: "G7 Still Max Energy"
+    id: g7_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g7_still_energy).state > id(g7_still_max_energy).state) {
+        return id(g7_still_energy).state;
+      } else {
+        return id(g7_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G7 Move Max Energy"
+    id: g7_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g7_move_energy).state > id(g7_move_max_energy).state) {
+        return id(g7_move_energy).state;
+      } else {
+        return id(g7_move_max_energy).state;
+      }
+
+  # Track the max value of g8_still_energy
+  - platform: template
+    name: "G8 Still Max Energy"
+    id: g8_still_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g8_still_energy).state > id(g8_still_max_energy).state) {
+        return id(g8_still_energy).state;
+      } else {
+        return id(g8_still_max_energy).state;
+      }
+    
+  - platform: template
+    name: "G8 Move Max Energy"
+    id: g8_move_max_energy
+    state_class: measurement
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    update_interval: 1s
+    lambda: |-
+      if (id(g8_move_energy).state > id(g8_move_max_energy).state) {
+        return id(g8_move_energy).state;
+      } else {
+        return id(g8_move_max_energy).state;
       }
 
 
@@ -731,17 +978,6 @@ button:
       - scd4x.perform_forced_calibration:
           value: 420
           id: scd40
-  # Button to reset the max value of g0_still_energy
-  - platform: template
-    name: "Reset Max Energy"
-    id: reset_max_energy
-    entity_category: "diagnostic"
-    on_press:
-      then:
-        - lambda: |-
-            id(g0_still_max_energy).publish_state(0.0);
-            id(g0_move_max_energy).publish_state(0.0);
-
 
 
 switch:
@@ -754,9 +990,25 @@ switch:
       id: radar_engineering_mode
       on_turn_on:
         then:
-          - lambda: |-
-              id(g0_still_max_energy).publish_state(0.0);
-              id(g0_move_max_energy).publish_state(0.0);
+            - lambda: |-
+                id(g0_still_max_energy).publish_state(0.0);
+                id(g0_move_max_energy).publish_state(0.0);
+                id(g1_still_max_energy).publish_state(0.0);
+                id(g1_move_max_energy).publish_state(0.0);
+                id(g2_still_max_energy).publish_state(0.0);
+                id(g2_move_max_energy).publish_state(0.0);
+                id(g3_still_max_energy).publish_state(0.0);
+                id(g3_move_max_energy).publish_state(0.0);
+                id(g4_still_max_energy).publish_state(0.0);
+                id(g4_move_max_energy).publish_state(0.0);
+                id(g5_still_max_energy).publish_state(0.0);
+                id(g5_move_max_energy).publish_state(0.0);
+                id(g6_still_max_energy).publish_state(0.0);
+                id(g6_move_max_energy).publish_state(0.0);
+                id(g7_still_max_energy).publish_state(0.0);
+                id(g7_move_max_energy).publish_state(0.0);
+                id(g8_still_max_energy).publish_state(0.0);
+                id(g8_move_max_energy).publish_state(0.0);
   - platform: template
     name: "Startup Light Blink"
     id: startup_light_blink
