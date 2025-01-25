@@ -1,8 +1,8 @@
 esphome:
-  name: "${name}"
-  friendly_name: Apollo Multisensor Mk1 (MSR-1)
+  name: $device_name
+  friendly_name: $friendly_name
   comment: Apollo Multisensor Mk1 (MSR-1)
-  name_add_mac_suffix: true
+  name_add_mac_suffix: false
   platformio_options:
     board_build.flash_mode: dio
 
