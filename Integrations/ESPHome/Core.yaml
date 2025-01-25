@@ -385,100 +385,118 @@ sensor:
         name: G0 Move Energy
         id: g0_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G0 Still Energy
         id: g0_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g1:
       move_energy:
         name: G1 Move Energy
         id: g1_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G1 Still Energy
         id: g1_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g2:
       move_energy:
         name: G2 Move Energy
         id: g2_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G2 Still Energy
         id: g2_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g3:
       move_energy:
         name: G3 Move Energy
         id: g3_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G3 Still Energy
         id: g3_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g4:
       move_energy:
         name: G4 Move Energy
         id: g4_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G4 Still Energy
         id: g4_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g5:
       move_energy:
         name: G5 Move Energy
         id: g5_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G5 Still Energy
         id: g5_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g6:
       move_energy:
         name: G6 Move Energy
         id: g6_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G6 Still Energy
         id: g6_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g7:
       move_energy:
         name: G7 Move Energy
         id: g7_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G7 Still Energy
         id: g7_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
     g8:
       move_energy:
         name: G8 Move Energy
         id: g8_move_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
       still_energy:
         name: G8 Still Energy
         id: g8_still_energy
         state_class: measurement
-        internal: true
+        entity_category: "diagnostic"
+        internal: false
 
   - platform: template
     name: "Motion Gate Number"
