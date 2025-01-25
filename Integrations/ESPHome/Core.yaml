@@ -736,10 +736,10 @@ button:
     name: "Reset Max Energy"
     id: reset_max_energy
     on_press:
-    then:
-      - lambda: |-
-          id(max_g0_still_energy).publish_state(0.0);
-          id(max_g0_move_energy).publish_state(0.0);
+      then:
+        - lambda: |-
+            id(max_g0_still_energy).publish_state(0.0);
+            id(max_g0_move_energy).publish_state(0.0);
 
 
 
