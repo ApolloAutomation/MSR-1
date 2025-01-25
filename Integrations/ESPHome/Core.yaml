@@ -387,26 +387,12 @@ sensor:
         state_class: measurement
         entity_category: "diagnostic"
         internal: false
-        on_value_range:
-          above: 0.0
-          then:
-            - lambda: |- 
-                if (id(g0_move_energy).state > id(g0_move_max_energy).state) {
-                  id(g0_move_max_energy).publish_state(id(g0_move_energy).state);
-                }
       still_energy:
         name: G0 Still Energy
         id: g0_still_energy
         state_class: measurement
         entity_category: "diagnostic"
         internal: false
-        on_value_range:
-          above: 0.0
-          then:
-            - lambda: |- 
-                if (id(g0_still_energy).state > id(g0_still_max_energy).state) {
-                  id(g0_still_max_energy).publish_state(id(g0_still_energy).state);
-                }
     g1:
       move_energy:
         name: G1 Move Energy
@@ -652,7 +638,11 @@ sensor:
     entity_category: "diagnostic"
     update_interval: 1s
     lambda: |-
-      return 0.0;
+      if (id(g0_still_energy).state > id(g0_still_max_energy).state) {
+        return id(g0_still_energy).state;
+      } else {
+        return id(g0_still_max_energy).state;
+      }
   - platform: template
     name: "G0 Move Max Energy"
     id: g0_move_max_energy
@@ -662,11 +652,14 @@ sensor:
     entity_category: "diagnostic"
     update_interval: 1s
     lambda: |-
-      return 0.0;
+      if (id(g0_move_energy).state > id(g0_move_max_energy).state) {
+        return id(g0_move_energy).state;
+      } else {
+        return id(g0_move_max_energy).state;
+      }
 
 
 
-  # Button to reset the max value of g0_still_energy
 
 
   - platform: bme280_i2c
@@ -737,6 +730,7 @@ button:
       - scd4x.perform_forced_calibration:
           value: 420
           id: scd40
+  # Button to reset the max value of g0_still_energy
   - platform: template
     name: "Reset Max Energy"
     id: reset_max_energy
