@@ -637,12 +637,14 @@ sensor:
     accuracy_decimals: 0
     entity_category: "diagnostic"
     update_interval: 1s
+    initial_value: 0.0
     lambda: |-
       if (id(g0_still_energy).state > id(g0_still_max_energy).state) {
         return id(g0_still_energy).state;
       } else {
         return id(g0_still_max_energy).state;
       }
+    
   - platform: template
     name: "G0 Move Max Energy"
     id: g0_move_max_energy
@@ -651,6 +653,7 @@ sensor:
     accuracy_decimals: 0
     entity_category: "diagnostic"
     update_interval: 1s
+    initial_value: 0.0
     lambda: |-
       if (id(g0_move_energy).state > id(g0_move_max_energy).state) {
         return id(g0_move_energy).state;
