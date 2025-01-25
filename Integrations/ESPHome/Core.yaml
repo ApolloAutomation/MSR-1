@@ -654,7 +654,6 @@ sensor:
     accuracy_decimals: 0
     entity_category: "diagnostic"
     update_interval: 1s
-    initial_value: 0.0
     lambda: |-
       if (isnan(id(g0_move_max_energy).state)) {
         return 0.0;
