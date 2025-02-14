@@ -890,6 +890,13 @@ sensor:
       } else {
         return id(g8_still_max_energy).state;
       }
+    filters:
+      - lambda: |
+          if (id(radar_engineering_mode).state) {
+            return x; // Return the original value if engineering mode is true
+          } else {
+            return false; // Return false (not connected) if engineering mode is false
+          }
     
   - platform: template
     name: "G8 Move Max Energy"
