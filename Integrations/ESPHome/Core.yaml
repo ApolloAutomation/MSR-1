@@ -642,6 +642,10 @@ sensor:
       } else {
         return id(g0_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G0 Move Max Energy"
@@ -657,6 +661,10 @@ sensor:
       } else {
         return id(g0_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
 
   # Track the max value of g1_still_energy
   - platform: template
@@ -673,6 +681,10 @@ sensor:
       } else {
         return id(g1_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G1 Move Max Energy"
@@ -688,6 +700,10 @@ sensor:
       } else {
         return id(g1_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
 
   # Track the max value of g2_still_energy
   - platform: template
@@ -704,6 +720,10 @@ sensor:
       } else {
         return id(g2_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G2 Move Max Energy"
@@ -719,6 +739,10 @@ sensor:
       } else {
         return id(g2_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
 
   # Track the max value of g3_still_energy
   - platform: template
@@ -735,6 +759,10 @@ sensor:
       } else {
         return id(g3_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G3 Move Max Energy"
@@ -750,6 +778,10 @@ sensor:
       } else {
         return id(g3_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
 
   # Track the max value of g4_still_energy
   - platform: template
@@ -766,6 +798,10 @@ sensor:
       } else {
         return id(g4_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G4 Move Max Energy"
@@ -781,6 +817,10 @@ sensor:
       } else {
         return id(g4_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
 
   # Track the max value of g5_still_energy
   - platform: template
@@ -797,6 +837,10 @@ sensor:
       } else {
         return id(g5_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G5 Move Max Energy"
@@ -812,6 +856,11 @@ sensor:
       } else {
         return id(g5_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
+    
 
   # Track the max value of g6_still_energy
   - platform: template
@@ -828,6 +877,10 @@ sensor:
       } else {
         return id(g6_still_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
     
   - platform: template
     name: "G6 Move Max Energy"
@@ -843,7 +896,12 @@ sensor:
       } else {
         return id(g6_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
 
+      
   # Track the max value of g7_still_energy
   - platform: template
     name: "G7 Still Max Energy"
@@ -859,7 +917,11 @@ sensor:
       } else {
         return id(g7_still_max_energy).state;
       }
-    
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60  
+      
   - platform: template
     name: "G7 Move Max Energy"
     id: g7_move_max_energy
@@ -874,6 +936,11 @@ sensor:
       } else {
         return id(g7_move_max_energy).state;
       }
+    filters:
+      - max:
+          window_size: 60
+          send_every: 60
+
 
   # Track the max value of g8_still_energy
   - platform: template
