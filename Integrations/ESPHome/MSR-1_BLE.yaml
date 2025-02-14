@@ -42,7 +42,7 @@ bluetooth_proxy:
 packages:
   remote_package:
     url: https://github.com/hellosamblack/MSR-1/
-    ref: main
+    ref: dev
     files:
       - Integrations/ESPHome/Core.yaml
     refresh: 0d
