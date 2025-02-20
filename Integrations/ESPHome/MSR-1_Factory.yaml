@@ -42,11 +42,5 @@ ota:
   - platform: esphome
     id: ota_esphome
 
-
 packages:
-  remote_package:
-    url: https://github.com/ApolloAutomation/MSR-1/
-    ref: main
-    files:
-      - Integrations/ESPHome/Core.yaml
-    refresh: 0d
+  core: !include Core.yaml
