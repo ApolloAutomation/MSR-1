@@ -1,7 +1,7 @@
 #Define Project
 substitutions:
   name: apollo-msr-1
-  version:  "24.7.15.1"
+  version:  "25.2.20.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   
 esphome:
@@ -481,7 +481,19 @@ light:
     method:
       type: esp32_rmt
       channel: 0
-    
+    effects:
+      - pulse:
+          name: "Slow Pulse"
+          transition_length: 1000ms
+          update_interval: 1000ms
+          min_brightness: 0%
+          max_brightness: 100%
+      - pulse:
+          name: "Fast Pulse"
+          transition_length: 100ms
+          update_interval: 100ms
+          min_brightness: 50%
+          max_brightness: 100%
 
 button:
   - platform: restart
