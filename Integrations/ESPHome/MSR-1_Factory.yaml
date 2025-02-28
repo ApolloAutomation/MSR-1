@@ -1,5 +1,5 @@
 esphome:
-  name: "${name}"
+  name: apollo-msr-1
   friendly_name: Apollo Multisensor Mk1 (MSR-1)
   comment: Apollo Multisensor Mk1 (MSR-1)
   name_add_mac_suffix: true
@@ -13,10 +13,10 @@ esphome:
           id(radar_bluetooth).turn_off();
 
   project:
-    name: "ApolloAutomation.MSR-1"
+    name: "ApolloAutomation.MSR-1_Factory"
     version: "${version}"
 
-  min_version: 2024.6.4
+  min_version: 2025.2.0
 
 dashboard_import:
   package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
