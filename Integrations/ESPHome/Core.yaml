@@ -1,12 +1,11 @@
 substitutions:
-  name: apollo-msr-1
-  version:  "25.2.20.2"
+  version:  "25.2.27.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
   board: esp32-c3-devkitm-1
   framework:
-    type: arduino
+    type: esp-idf
 captive_portal:
 
 web_server:
@@ -422,29 +421,27 @@ sensor:
 
   
 light:
-  - platform: neopixelbus
+  - platform: esp32_rmt_led_strip
     id: rgb_light
-    type: GRB
-    variant: WS2812x
-    pin: GPIO3
-    num_leds: 1
     name: "RGB Light"
-    method:
-      type: esp32_rmt
-      channel: 0
+    pin: GPIO3
+    default_transition_length: 0s
+    chipset: WS2812
+    num_leds: 3
+    rgb_order: grb
     effects:
       - pulse:
           name: "Slow Pulse"
           transition_length: 1000ms
           update_interval: 1000ms
-          min_brightness: 0%
+          min_brightness: 50%
           max_brightness: 100%
       - pulse:
           name: "Fast Pulse"
           transition_length: 100ms
           update_interval: 100ms
           min_brightness: 50%
-          max_brightness: 100%    
+          max_brightness: 100%  
 
 button:
   - platform: restart
