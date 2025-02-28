@@ -13,6 +13,10 @@ jobs:
           - Integrations/ESPHome/MSR-1.yaml
           - Integrations/ESPHome/MSR-1_BLE.yaml
           - Integrations/ESPHome/MSR-1_Factory.yaml
+        esphome-version:
+          - stable
+          - beta
+          - dev
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4.1.7
