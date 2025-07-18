@@ -1,12 +1,11 @@
 substitutions:
-  name: apollo-msr-1
-  version:  "25.2.20.2"
+  version:  "25.7.18.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
   board: esp32-c3-devkitm-1
   framework:
-    type: arduino
+    type: esp-idf
 captive_portal:
 
 web_server:
@@ -245,7 +244,10 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(radar_has_target).state) && ((id(radar_detection_distance).state < id(radar_z1_end).state) && (id(radar_detection_distance).state > id(radar_z1_start).state))){
+      bool still_in_zone = id(radar_has_still_target).state && (id(still_distance).state >= id(radar_z1_start).state) && (id(still_distance).state <= id(radar_z1_end).state);
+      bool moving_in_zone = id(radar_has_moving_target).state && (id(moving_distance).state >= id(radar_z1_start).state) && (id(moving_distance).state <= id(radar_z1_end).state);
+      
+      if (still_in_zone || moving_in_zone) {
         return true;
       } else {
         return false;
@@ -256,7 +258,10 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(radar_has_target).state) && ((id(radar_z1_end).state < id(radar_detection_distance).state) && (id(radar_detection_distance).state < id(radar_z2_end).state))) {
+      bool still_in_zone = id(radar_has_still_target).state && (id(still_distance).state > id(radar_z1_end).state) && (id(still_distance).state <= id(radar_z2_end).state);
+      bool moving_in_zone = id(radar_has_moving_target).state && (id(moving_distance).state > id(radar_z1_end).state) && (id(moving_distance).state <= id(radar_z2_end).state);
+
+      if (still_in_zone || moving_in_zone) {
         return true;
       } else {
         return false;
@@ -267,7 +272,10 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      if ((id(radar_has_target).state) && ((id(radar_z2_end).state < id(radar_detection_distance).state) && (id(radar_detection_distance).state < id(radar_z3_end).state))) {
+      bool still_in_zone = id(radar_has_still_target).state && (id(still_distance).state > id(radar_z2_end).state) && (id(still_distance).state <= id(radar_z3_end).state);
+      bool moving_in_zone = id(radar_has_moving_target).state && (id(moving_distance).state > id(radar_z2_end).state) && (id(moving_distance).state <= id(radar_z3_end).state);
+
+      if (still_in_zone || moving_in_zone) {
         return true;
       } else {
         return false;
@@ -303,6 +311,26 @@ sensor:
   - platform: internal_temperature
     name: "ESP Temperature"
     id: sys_esp_temperature
+    filters:
+        - lambda: |-
+            static float last_reported_value = 0.0;
+            float current_value = x;
+
+            // Check if the reduce_db_reporting switch is on
+            if (id(reduce_db_reporting).state) {
+              // Apply delta filter: only report if the value has changed by 2 or more
+              if (abs(current_value - last_reported_value) >= 5.0) {
+                last_reported_value = current_value;  // Update the last reported value
+                return current_value;
+              } else {
+                // Return the last reported value without updating if change is less than 2
+                return {};  // Discard the update
+              }
+            } else {
+              // If reduce_db_reporting is off, report the current value normally
+              last_reported_value = current_value;
+              return current_value;
+            }
 
 
   - platform: uptime
@@ -332,18 +360,101 @@ sensor:
     moving_distance:
       name: Radar Moving Distance
       id: moving_distance
+      filters:
+        - lambda: |-
+            static float last_reported_value = 0.0;
+            float current_value = x;
+
+            // Check if the radar_has_moving_target sensor is off
+            if (!id(radar_has_moving_target).state) {
+              return NAN;
+            }
+
+            // Check if the reduce_db_reporting switch is on
+            if (id(reduce_db_reporting).state) {
+              // Apply delta filter: only report if the value has changed by 2 or more
+              if (abs(current_value - last_reported_value) >= 5.0) {
+                last_reported_value = current_value;  // Update the last reported value
+                return current_value;
+              } else {
+                // Return the last reported value without updating if change is less than 2
+                return {};  // Discard the update
+              }
+            } else {
+              // If reduce_db_reporting is off, report the current value normally
+              last_reported_value = current_value;
+              return current_value;
+            }
     still_distance:
       name: Radar Still Distance
       id: still_distance
+      filters:
+        - lambda: |-
+            static float last_reported_value = 0.0;
+            float current_value = x;
+
+            // Check if the radar_has_still_target sensor is off
+            if (!id(radar_has_still_target).state) {
+              return NAN;
+            }
+
+            // Check if the reduce_db_reporting switch is on
+            if (id(reduce_db_reporting).state) {
+              // Apply delta filter: only report if the value has changed by 2 or more
+              if (abs(current_value - last_reported_value) >= 5.0) {
+                last_reported_value = current_value;  // Update the last reported value
+                return current_value;
+              } else {
+                // Return the last reported value without updating if change is less than 2
+                return {};  // Discard the update
+              }
+            } else {
+              // If reduce_db_reporting is off, report the current value normally
+              last_reported_value = current_value;
+              return current_value;
+            }
     moving_energy:
       name: Radar Move Energy
       id: radar_moving_energy
+      filters:
+        - lambda: |-
+            if (id(reduce_db_reporting).state) return {};
+            return x;
     still_energy:
       name: Radar Still Energy
       id: radar_still_energy
+      filters:
+        - lambda: |-
+            if (id(reduce_db_reporting).state) return {};
+            return x;
     detection_distance:
       name: Radar Detection Distance
       id: radar_detection_distance
+      filters:
+        - lambda: |-
+            static float last_reported_value = 0.0;
+            float current_value = x;
+
+            // Check if the radar_has_target sensor is off
+            if (!id(radar_has_target).state) {
+              return NAN;
+            }
+
+            // Check if the reduce_db_reporting switch is on
+            if (id(reduce_db_reporting).state) {
+              // Apply delta filter: only report if the value has changed by 2 or more
+              if (abs(current_value - last_reported_value) >= 5.0) {
+                last_reported_value = current_value;  // Update the last reported value
+                return current_value;
+              } else {
+                // Return the last reported value without updating if change is less than 2
+                return {};  // Discard the update
+              }
+            } else {
+              // If reduce_db_reporting is off, report the current value normally
+              last_reported_value = current_value;
+              return current_value;
+            }
     g0:
       move_energy:
         name: g0 move energy
@@ -412,39 +523,76 @@ sensor:
   
   - platform: ltr390
     id: ltr_390
-    uv_index:
-      name: "LTR390 UV Index"
-      id: ltr390uvindex
     light:
       name: "LTR390 Light"
       id: ltr390light
-    update_interval: 5s
+      filters:
+        - lambda: |-
+            static float last_reported_value = 0.0;
+            float current_value = x;
+
+            // Check if the reduce_db_reporting switch is on
+            if (id(reduce_db_reporting).state) {
+              // Apply delta filter: only report if the value has changed by 2 or more
+              if (abs(current_value - last_reported_value) >= 20.0) {
+                last_reported_value = current_value;  // Update the last reported value
+                return current_value;
+              } else {
+                // Return the last reported value without updating if change is less than 2
+                return {};  // Discard the update
+              }
+            } else {
+              // If reduce_db_reporting is off, report the current value normally
+              last_reported_value = current_value;
+              return current_value;
+            }
+    uv_index:
+      name: "LTR390 UV Index"
+      id: ltr390uvindex
+      filters:
+        - lambda: |-
+            static float last_reported_value = 0.0;
+            float current_value = x;
+
+            // Check if the reduce_db_reporting switch is on
+            if (id(reduce_db_reporting).state) {
+              // Apply delta filter: only report if the value has changed by 2 or more
+              if (abs(current_value - last_reported_value) >= 20.0) {
+                last_reported_value = current_value;  // Update the last reported value
+                return current_value;
+              } else {
+                // Return the last reported value without updating if change is less than 2
+                return {};  // Discard the update
+              }
+            } else {
+              // If reduce_db_reporting is off, report the current value normally
+              last_reported_value = current_value;
+              return current_value;
+            }
 
   
 light:
-  - platform: neopixelbus
+  - platform: esp32_rmt_led_strip
     id: rgb_light
-    type: GRB
-    variant: WS2812x
-    pin: GPIO3
-    num_leds: 1
     name: "RGB Light"
-    method:
-      type: esp32_rmt
-      channel: 0
+    pin: GPIO3
+    default_transition_length: 0s
+    chipset: WS2812
+    num_leds: 3
+    rgb_order: grb
     effects:
       - pulse:
           name: "Slow Pulse"
           transition_length: 1000ms
           update_interval: 1000ms
-          min_brightness: 0%
+          min_brightness: 50%
           max_brightness: 100%
       - pulse:
           name: "Fast Pulse"
           transition_length: 100ms
           update_interval: 100ms
           min_brightness: 50%
-          max_brightness: 100%    
+          max_brightness: 100%  
 
 button:
   - platform: restart
@@ -489,6 +637,13 @@ switch:
   - platform: factory_reset
     id: factory_reset_switch
     internal: true
+  - platform: template
+    name: "Reduce DB Reporting"
+    id: reduce_db_reporting
+    icon: mdi:database
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    entity_category: "config"
 
 text_sensor:
   - platform: ld2410

@@ -1,11 +1,21 @@
 name: CI
-
 on:
   pull_request:
 
+permissions:
+  # Allow GITHUB_TOKEN to add labels to pull requests
+  pull-requests: write
+  issues: write
+  contents: read
+  id-token: write
+
 jobs:
+  label-check:
+    name: Label Check
+    uses: ApolloAutomation/Workflows/.github/workflows/label-check.yml@main
+    
   ci:
-    name: Building ${{ matrix.file }}
+    name: Building ${{ matrix.file }} / ESPHome ${{ matrix.esphome-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,10 +23,14 @@ jobs:
           - Integrations/ESPHome/MSR-1.yaml
           - Integrations/ESPHome/MSR-1_BLE.yaml
           - Integrations/ESPHome/MSR-1_Factory.yaml
+        esphome-version:
+          - stable
+          - beta
+          - dev
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
       - name: Build ESPHome firmware to verify configuration
-        uses: esphome/build-action@v3.1.0
+        uses: esphome/build-action@v7
         with:
-          yaml_file: ${{ matrix.file }}
+          yaml-file: ${{ matrix.file }}
