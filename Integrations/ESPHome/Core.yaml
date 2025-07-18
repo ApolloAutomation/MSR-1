@@ -1,5 +1,5 @@
 substitutions:
-  version:  "25.2.27.1"
+  version:  "25.7.18.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
