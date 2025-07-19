@@ -1,5 +1,5 @@
 substitutions:
-  version:  "25.7.18.1"
+  version:  "25.7.18.2"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -578,7 +578,8 @@ light:
     pin: GPIO3
     default_transition_length: 0s
     chipset: WS2812
-    num_leds: 3
+    num_leds: 1
+    rmt_symbols: 48
     rgb_order: grb
     effects:
       - pulse:
