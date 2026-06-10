@@ -29,7 +29,7 @@ dashboard_import:
 
 ota:
   - platform: esphome
-    password: "apolloautomation"
+    password: ${ota_password}
 
 wifi:
   ap:
