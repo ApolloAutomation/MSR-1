@@ -34,6 +34,8 @@ ota:
     id: ota_managed
 
 wifi:
+  on_connect:
+    - component.update: update_http_request
   ap:
     ssid: "Apollo MSR1 Hotspot"
 
