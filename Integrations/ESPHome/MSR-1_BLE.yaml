@@ -18,7 +18,7 @@ esphome:
     name: "ApolloAutomation.MSR-1_BLE"
     version: "${version}"
 
-  min_version: 2025.2.0
+  min_version: 2025.11.0
 
 logger:
 
@@ -30,13 +30,28 @@ dashboard_import:
 ota:
   - platform: esphome
     password: ${ota_password}
+  - platform: http_request
+    id: ota_managed
 
 wifi:
+  on_connect:
+    - component.update: update_http_request
   ap:
     ssid: "Apollo MSR1 Hotspot"
 
 bluetooth_proxy:
   active: true
+
+http_request:
+  verify_ssl: true
+
+safe_mode:
+
+update:
+  - platform: http_request
+    id: update_http_request
+    name: Firmware Update
+    source: https://apolloautomation.github.io/MSR-1/firmware-ble/manifest.json
 
 packages:
   core: !include Core.yaml
