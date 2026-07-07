@@ -1,3 +1,6 @@
+substitutions:
+  ble_firmware: "true"
+
 esphome:
   name: apollo-msr-1
   friendly_name: Apollo Multisensor Mk1 (MSR-1)
