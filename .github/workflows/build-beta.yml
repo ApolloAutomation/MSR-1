@@ -1,7 +1,7 @@
 name: Build and Publish Beta
 
 # Builds MSR-1 firmware from the beta branch and publishes it as assets on a
-# rolling "beta" pre-release. The on-device "Firmware Channel" select points
+# rolling "beta-fw" pre-release. The on-device "Firmware Channel" select points
 # OTA updates at these assets. Stable firmware is built/published separately
 # by build.yml (push to main -> GitHub Pages).
 
@@ -63,12 +63,12 @@ jobs:
           path: fw
           pattern: firmware*
 
-      - name: Ensure rolling 'beta' pre-release exists
+      - name: Ensure rolling 'beta-fw' pre-release exists
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view beta -R "${{ github.repository }}" >/dev/null 2>&1 \
-            || gh release create beta -R "${{ github.repository }}" \
+          gh release view beta-fw -R "${{ github.repository }}" >/dev/null 2>&1 \
+            || gh release create beta-fw -R "${{ github.repository }}" \
                  --prerelease --title "Beta (rolling)" \
                  --notes "Latest MSR-1 beta firmware. Auto-updated on every push to the beta branch."
 
@@ -76,7 +76,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BASE="https://github.com/${{ github.repository }}/releases/download/beta"
+          BASE="https://github.com/${{ github.repository }}/releases/download/beta-fw"
           declare -A DIRS=( [standard]=firmware-standard [ble]=firmware-ble-beta )
           for v in standard ble; do
             src="fw/${DIRS[$v]}"
@@ -98,8 +98,8 @@ jobs:
               | .builds[0].parts |= map(.path = ($base + "/" + $pfx + (.path | sub(".*/"; ""))))
             ' "$man" > "manifest-$v.json"
             cat "manifest-$v.json"
-            gh release upload beta "manifest-$v.json" -R "${{ github.repository }}" --clobber
+            gh release upload beta-fw "manifest-$v.json" -R "${{ github.repository }}" --clobber
             find "$src" -name '*.bin' -print -exec \
-              gh release upload beta {} -R "${{ github.repository }}" --clobber \;
+              gh release upload beta-fw {} -R "${{ github.repository }}" --clobber \;
           done
           echo "Beta assets published."
