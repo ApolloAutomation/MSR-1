@@ -45,10 +45,10 @@ ota:
 
 http_request:
   verify_ssl: true
-  # GitHub release-asset downloads answer with a redirect whose signed
-  # Location header exceeds the 512-byte default and fails with
-  # "HTTP_CLIENT: Out of buffer".
-  buffer_size_rx: 2048
+  # GitHub release-asset downloads answer with a redirect carrying a
+  # ~3.6 KB Content-Security-Policy header; each header line must fit
+  # this buffer or the request fails with "HTTP_CLIENT: Out of buffer".
+  buffer_size_rx: 5120
 
 safe_mode:
 
