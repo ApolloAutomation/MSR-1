@@ -1,10 +1,17 @@
 substitutions:
-  version:  "26.6.17.1"
+  version:  "26.7.7.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
   # device on your network uses a unique secret instead of the shared default.
   ota_password: "apolloautomation"
+  # Firmware variant identity: overridden to "true" by MSR-1_BLE.yaml so
+  # each image tracks its own OTA manifests.
+  ble_firmware: "false"
+  # Manifest URL bases. Stable = GitHub Pages (main branch builds).
+  # Beta = rolling "beta" pre-release assets (beta branch builds).
+  stable_manifest_base: "https://apolloautomation.github.io/MSR-1"
+  beta_manifest_base: "https://github.com/ApolloAutomation/MSR-1/releases/download/beta"
 
 esp32:
   variant: esp32c3
@@ -655,6 +662,41 @@ button:
           value: 420
           id: scd40
 
+  - platform: template
+    name: "Firmware Update"
+    id: update_firmware
+    icon: mdi:cloud-download
+    entity_category: "config"
+    on_press:
+      - logger.log: "Applying firmware based on selected channel and variant"
+      # Free heap for the TLS download on the BLE variant. Guarded so the
+      # non-BLE variant compiles the same YAML.
+      - lambda: |-
+          #ifdef USE_ESP32_BLE
+          if (esp32_ble::global_ble && esp32_ble::global_ble->is_active()) {
+            ESP_LOGI("firmware", "Disabling BLE for firmware update");
+            esp32_ble::global_ble->disable();
+          }
+          #endif
+      - delay: 3s
+      - script.execute: apply_ota_source
+      - script.wait: apply_ota_source
+      # The manifest fetch runs in its own task and YAML has no "fetch done"
+      # condition to wait on (update.is_available stays false for same-version
+      # variant switches), so give it a fixed window like R_PRO-1/CAST-1 do.
+      - delay: 5s
+      - update.perform:
+          id: update_http_request
+          force_update: true
+      # Only reached if the update did not start (e.g. manifest unreachable).
+      - lambda: |-
+          #ifdef USE_ESP32_BLE
+          if (esp32_ble::global_ble) {
+            ESP_LOGI("firmware", "Re-enabling BLE (no update performed)");
+            esp32_ble::global_ble->enable();
+          }
+          #endif
+
 
 switch:
   - platform: ld2410
@@ -705,6 +747,44 @@ select:
     distance_resolution:
       name: "Radar Distance Resolution"
       disabled_by_default: true
+
+  - platform: template
+    name: "Firmware Channel"
+    id: firmware_channel
+    icon: mdi:source-branch
+    entity_category: "config"
+    optimistic: true
+    restore_value: true
+    options:
+      - "Stable"
+      - "Beta"
+    initial_option: "Stable"
+    on_value:
+      then:
+        - script.execute: apply_ota_source
+
+script:
+  - id: apply_ota_source
+    # Sets the OTA manifest URL from the Firmware Channel select
+    # (Stable/Beta) for the firmware variant this image was built as.
+    # Stable = GitHub Pages, Beta = rolling "beta" release assets.
+    then:
+      - lambda: |-
+          const bool ble  = std::string("${ble_firmware}") == "true";
+          const bool beta = id(firmware_channel).current_option() == "Beta";
+          std::string url;
+          if (beta) {
+            url = ble
+              ? "${beta_manifest_base}/manifest-ble.json"
+              : "${beta_manifest_base}/manifest-standard.json";
+          } else {
+            url = ble
+              ? "${stable_manifest_base}/firmware-ble/manifest.json"
+              : "${stable_manifest_base}/firmware/manifest.json";
+          }
+          ESP_LOGI("firmware", "OTA manifest set to: %s", url.c_str());
+          id(update_http_request).set_source_url(url);
+      - component.update: update_http_request
 
 
 
