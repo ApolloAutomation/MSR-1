@@ -1,5 +1,5 @@
 substitutions:
-  version:  "26.7.8.2"
+  version:  "26.7.8.4"
   device_description: ${name} made by Apollo Automation - version ${version}.
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
@@ -8,6 +8,11 @@ substitutions:
   # Firmware variant identity: overridden to "true" by MSR-1_BLE.yaml so
   # each image tracks its own OTA manifests.
   ble_firmware: "false"
+  # Default update channel on first boot (no stored user choice yet, i.e. a
+  # fresh flash). The beta-channel builds override this to "Beta" (see
+  # Integrations/ESPHome/beta-channel/) so firmware obtained from the beta
+  # channel keeps tracking it instead of offering a stable "downgrade".
+  firmware_channel_default: "Stable"
   # Manifest URL bases. Stable = GitHub Pages (main branch builds).
   # Beta = rolling "beta" pre-release assets (beta branch builds).
   stable_manifest_base: "https://apolloautomation.github.io/MSR-1"
@@ -758,7 +763,7 @@ select:
     options:
       - "Stable"
       - "Beta"
-    initial_option: "Stable"
+    initial_option: "${firmware_channel_default}"
     on_value:
       then:
         - script.execute: apply_ota_source
