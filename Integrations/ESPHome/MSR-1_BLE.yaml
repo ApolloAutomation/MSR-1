@@ -47,6 +47,10 @@ bluetooth_proxy:
 
 http_request:
   verify_ssl: true
+  # GitHub release-asset downloads answer with a redirect whose signed
+  # Location header exceeds the 512-byte default and fails with
+  # "HTTP_CLIENT: Out of buffer".
+  buffer_size_rx: 2048
 
 safe_mode:
 

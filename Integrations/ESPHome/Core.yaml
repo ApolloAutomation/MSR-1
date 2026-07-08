@@ -1,5 +1,5 @@
 substitutions:
-  version:  "26.7.8.5"
+  version:  "26.7.8.6"
   device_description: ${name} made by Apollo Automation - version ${version}.
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
@@ -707,9 +707,23 @@ button:
       # condition to wait on (update.is_available stays false for same-version
       # variant switches), so give it a fixed window like R_PRO-1/CAST-1 do.
       - delay: 5s
-      - update.perform:
-          id: update_http_request
-          force_update: true
+      # perform() installs whatever manifest was last fetched successfully -
+      # if the refresh above failed (e.g. network blip), that can be the OTHER
+      # channel's image. Refuse instead of installing the wrong firmware.
+      - lambda: |-
+          const bool want_beta = id(firmware_channel).current_option() == "Beta";
+          const bool want_ble  = id(firmware_ble).current_option() == "Enabled";
+          const std::string &url = id(update_http_request).update_info.firmware_url;
+          const bool url_beta = url.find("/releases/download/") != std::string::npos;
+          const bool url_ble  = url.find("ble") != std::string::npos;
+          if (url.empty() || url_beta != want_beta || url_ble != want_ble) {
+            ESP_LOGE("firmware",
+                     "Cached manifest (%s) does not match the selected channel/variant - "
+                     "the manifest refresh likely failed. Not installing; press again.",
+                     url.empty() ? "<none>" : url.c_str());
+          } else {
+            id(update_http_request).perform(true);
+          }
       # Only reached if the update did not start (e.g. manifest unreachable).
       - lambda: |-
           #ifdef USE_ESP32_BLE
