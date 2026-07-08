@@ -51,6 +51,10 @@ http_request:
   # ~3.6 KB Content-Security-Policy header; each header line must fit
   # this buffer or the request fails with "HTTP_CLIENT: Out of buffer".
   buffer_size_rx: 5120
+  # The redirect target is a signed URL with a ~850-char query string; the
+  # follow-up request line must fit the TX buffer or esp_http_client_open
+  # fails with "Out of buffer" before sending anything.
+  buffer_size_tx: 2048
 
 safe_mode:
 
