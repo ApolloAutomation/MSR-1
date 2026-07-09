@@ -18,6 +18,11 @@ substitutions:
   # Beta = rolling "beta" pre-release assets (beta branch builds).
   stable_manifest_base: "https://apolloautomation.github.io/MSR-1"
   beta_manifest_base: "https://github.com/ApolloAutomation/MSR-1/releases/download/beta-fw"
+  # Per-variant OTA manifest URLs. Core defaults to the unified (standard)
+  # image; MSR-1_BLE.yaml overrides these so legacy BLE devices stay on the
+  # firmware-ble manifest.
+  ota_stable_manifest: "${stable_manifest_base}/firmware/manifest.json"
+  ota_beta_manifest: "${beta_manifest_base}/manifest-standard.json"
 
 esphome:
   # List form so package merging concatenates with each variant's own on_boot
@@ -25,21 +30,34 @@ esphome:
   on_boot:
     - priority: -100
       then:
-        # The Bluetooth Proxy select mirrors the firmware actually running, so
-        # a failed or abandoned switch snaps back to the truth on reboot.
-        - lambda: |-
-            if (std::string("${ble_firmware}") == "true") {
-              id(firmware_ble).publish_state("Enabled");
-            } else {
-              id(firmware_ble).publish_state("Disabled");
-            }
         - script.execute: apply_ota_source
+    # Re-apply the Bluetooth Proxy switch after all components set up, so BLE
+    # scanning matches the persisted switch (proxy stays off by default).
+    - priority: -300
+      then:
+        - if:
+            condition:
+              switch.is_on: bluetooth_proxy_switch
+            then:
+              - esp32_ble_tracker.start_scan:
+                  continuous: true
+            else:
+              - esp32_ble_tracker.stop_scan:
 
 esp32:
   variant: esp32c3
   flash_size: 4MB
   framework:
     type: esp-idf
+
+esp32_ble_tracker:
+  id: ble_tracker
+  scan_parameters:
+    continuous: true
+
+bluetooth_proxy:
+  active: true
+
 captive_portal:
 
 web_server:
@@ -691,48 +709,35 @@ button:
     icon: mdi:cloud-download
     entity_category: "config"
     on_press:
-      - logger.log: "Applying firmware based on selected channel and variant"
-      # Free heap for the TLS download on the BLE variant. Guarded so the
-      # non-BLE variant compiles the same YAML.
+      - logger.log: "Applying firmware update for the selected channel"
+      # Free RAM for the TLS download by dropping the BLE stack. On success the
+      # device reboots and the Bluetooth Proxy switch restores its scan state;
+      # on the not-started path below we re-enable and re-apply the switch.
       - lambda: |-
           #ifdef USE_ESP32_BLE
-          if (esp32_ble::global_ble && esp32_ble::global_ble->is_active()) {
-            ESP_LOGI("firmware", "Disabling BLE for firmware update");
-            esp32_ble::global_ble->disable();
-          }
+          if (esp32_ble::global_ble) esp32_ble::global_ble->disable();
           #endif
       - delay: 3s
       - script.execute: apply_ota_source
       - script.wait: apply_ota_source
-      # The manifest fetch runs in its own task and YAML has no "fetch done"
-      # condition to wait on (update.is_available stays false for same-version
-      # variant switches), so give it a fixed window like R_PRO-1/CAST-1 do.
+      # The manifest fetch runs in its own task; give it a fixed window to land
+      # (update.is_available stays false for same-version switches).
       - delay: 5s
-      # perform() installs whatever manifest was last fetched successfully -
-      # if the refresh above failed (e.g. network blip), that can be the OTHER
-      # channel's image. Refuse instead of installing the wrong firmware.
-      - lambda: |-
-          const bool want_beta = id(firmware_channel).current_option() == "Beta";
-          const bool want_ble  = id(firmware_ble).current_option() == "Enabled";
-          const std::string &url = id(update_http_request).update_info.firmware_url;
-          const bool url_beta = url.find("/releases/download/") != std::string::npos;
-          const bool url_ble  = url.find("ble") != std::string::npos;
-          if (url.empty() || url_beta != want_beta || url_ble != want_ble) {
-            ESP_LOGE("firmware",
-                     "Cached manifest (%s) does not match the selected channel/variant - "
-                     "the manifest refresh likely failed. Not installing; press again.",
-                     url.empty() ? "<none>" : url.c_str());
-          } else {
-            id(update_http_request).perform(true);
-          }
-      # Only reached if the update did not start (e.g. manifest unreachable).
+      - lambda: id(update_http_request).perform(true);
+      # Reached only if the update did not start. Restore the BLE stack and the
+      # Bluetooth Proxy switch's scan state.
       - lambda: |-
           #ifdef USE_ESP32_BLE
-          if (esp32_ble::global_ble) {
-            ESP_LOGI("firmware", "Re-enabling BLE (no update performed)");
-            esp32_ble::global_ble->enable();
-          }
+          if (esp32_ble::global_ble) esp32_ble::global_ble->enable();
           #endif
+      - if:
+          condition:
+            switch.is_on: bluetooth_proxy_switch
+          then:
+            - esp32_ble_tracker.start_scan:
+                continuous: true
+          else:
+            - esp32_ble_tracker.stop_scan:
 
 
 switch:
@@ -759,6 +764,19 @@ switch:
     restore_mode: RESTORE_DEFAULT_OFF
     optimistic: true
     entity_category: "config"
+
+  - platform: template
+    name: "Bluetooth Proxy"
+    id: bluetooth_proxy_switch
+    icon: mdi:bluetooth
+    entity_category: "config"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    on_turn_on:
+      - esp32_ble_tracker.start_scan:
+          continuous: true
+    on_turn_off:
+      - esp32_ble_tracker.stop_scan:
 
 text_sensor:
   - platform: ld2410
@@ -800,40 +818,15 @@ select:
       then:
         - script.execute: apply_ota_source
 
-  - platform: template
-    name: "Bluetooth Proxy"
-    id: firmware_ble
-    icon: mdi:bluetooth
-    entity_category: "config"
-    optimistic: true
-    restore_value: true
-    options:
-      - "Disabled"
-      - "Enabled"
-    initial_option: "Disabled"
-    on_value:
-      then:
-        - script.execute: apply_ota_source
-
 script:
   - id: apply_ota_source
-    # Sets the OTA manifest URL from the two selectors: Bluetooth Proxy
-    # (Disabled/Enabled) x Firmware Channel (Stable/Beta).
-    # Stable = GitHub Pages, Beta = rolling "beta" release assets.
+    # Sets the OTA manifest URL from the Firmware Channel select (Stable/Beta).
+    # The manifest base is per-variant (ota_*_manifest substitutions) so legacy
+    # MSR-1_BLE builds keep their firmware-ble manifest.
     then:
       - lambda: |-
-          const bool ble  = id(firmware_ble).current_option() == "Enabled";
           const bool beta = id(firmware_channel).current_option() == "Beta";
-          std::string url;
-          if (beta) {
-            url = ble
-              ? "${beta_manifest_base}/manifest-ble.json"
-              : "${beta_manifest_base}/manifest-standard.json";
-          } else {
-            url = ble
-              ? "${stable_manifest_base}/firmware-ble/manifest.json"
-              : "${stable_manifest_base}/firmware/manifest.json";
-          }
+          std::string url = beta ? "${ota_beta_manifest}" : "${ota_stable_manifest}";
           ESP_LOGI("firmware", "OTA manifest set to: %s", url.c_str());
           id(update_http_request).set_source_url(url);
       - component.update: update_http_request
