@@ -45,17 +45,6 @@ wifi:
   ap:
     ssid: "Apollo MSR1 Hotspot"
 
-http_request:
-  verify_ssl: true
-  # GitHub release-asset downloads answer with a redirect carrying a
-  # ~3.6 KB Content-Security-Policy header; each header line must fit
-  # this buffer or the request fails with "HTTP_CLIENT: Out of buffer".
-  buffer_size_rx: 5120
-  # The redirect target is a signed URL with a ~850-char query string; the
-  # follow-up request line must fit the TX buffer or esp_http_client_open
-  # fails with "Out of buffer" before sending anything.
-  buffer_size_tx: 2048
-
 safe_mode:
 
 update:
