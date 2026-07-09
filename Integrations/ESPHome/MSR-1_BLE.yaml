@@ -1,5 +1,8 @@
 substitutions:
   ble_firmware: "true"
+  # Legacy BLE devices keep updating from the firmware-ble manifest.
+  ota_stable_manifest: "https://apolloautomation.github.io/MSR-1/firmware-ble/manifest.json"
+  ota_beta_manifest: "https://github.com/ApolloAutomation/MSR-1/releases/download/beta-fw/manifest-ble.json"
 
 esphome:
   name: apollo-msr-1
@@ -41,9 +44,6 @@ wifi:
     - component.update: update_http_request
   ap:
     ssid: "Apollo MSR1 Hotspot"
-
-bluetooth_proxy:
-  active: true
 
 http_request:
   verify_ssl: true
