@@ -23,7 +23,7 @@ jobs:
       id-token: write
       pull-requests: write
     with:
-      device-name: msr-2
+      device-name: msr-1
       # MSR-1.yaml is the end-user image served at firmware/ (OTA updates). The Factory image (improv +
       # factory test) is only used for first flashes via the web installer.
       yaml-files: |

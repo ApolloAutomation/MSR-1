@@ -1,5 +1,4 @@
 substitutions:
-  ble_firmware: "true"
   # Legacy BLE devices keep updating from the firmware-ble manifest.
   ota_stable_manifest: "https://apolloautomation.github.io/MSR-1/firmware-ble/manifest.json"
   ota_beta_manifest: "https://github.com/ApolloAutomation/MSR-1/releases/download/beta-fw/manifest-ble.json"

@@ -5,10 +5,6 @@ substitutions:
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
   # device on your network uses a unique secret instead of the shared default.
   ota_password: "apolloautomation"
-  # Firmware variant identity: overridden to "true" by MSR-1_BLE.yaml. Seeds
-  # the Bluetooth Proxy select on boot so it self-corrects to what is
-  # actually running after a failed or abandoned switch.
-  ble_firmware: "false"
   # Default update channel on first boot (no stored user choice yet, i.e. a
   # fresh flash). The beta-channel builds override this to "Beta" (see
   # Integrations/ESPHome/beta-channel/) so firmware obtained from the beta
