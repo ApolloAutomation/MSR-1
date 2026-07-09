@@ -710,13 +710,6 @@ button:
     entity_category: "config"
     on_press:
       - logger.log: "Applying firmware update for the selected channel"
-      # Free RAM for the TLS download by dropping the BLE stack. On success the
-      # device reboots and the Bluetooth Proxy switch restores its scan state;
-      # on the not-started path below we re-enable and re-apply the switch.
-      - lambda: |-
-          #ifdef USE_ESP32_BLE
-          if (esp32_ble::global_ble) esp32_ble::global_ble->disable();
-          #endif
       - delay: 3s
       - script.execute: apply_ota_source
       - script.wait: apply_ota_source
@@ -724,20 +717,6 @@ button:
       # (update.is_available stays false for same-version switches).
       - delay: 5s
       - lambda: id(update_http_request).perform(true);
-      # Reached only if the update did not start. Restore the BLE stack and the
-      # Bluetooth Proxy switch's scan state.
-      - lambda: |-
-          #ifdef USE_ESP32_BLE
-          if (esp32_ble::global_ble) esp32_ble::global_ble->enable();
-          #endif
-      - if:
-          condition:
-            switch.is_on: bluetooth_proxy_switch
-          then:
-            - esp32_ble_tracker.start_scan:
-                continuous: true
-          else:
-            - esp32_ble_tracker.stop_scan:
 
 
 switch:
