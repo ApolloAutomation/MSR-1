@@ -52,7 +52,6 @@ esp32_ble_tracker:
     continuous: true
 
 bluetooth_proxy:
-  active: true
 
 captive_portal:
 
