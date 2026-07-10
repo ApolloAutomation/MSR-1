@@ -1,9 +1,12 @@
 name: Auto Assign
 
+# pull_request_target (not pull_request) so auto-assign works on fork PRs too:
+# forks get a read-only token on pull_request and cannot be assigned. Safe here
+# because this only assigns a user and never checks out or runs PR code.
 on:
   issues:
     types: [opened]
-  pull_request:
+  pull_request_target:
     types: [opened]
 
 permissions:
@@ -12,8 +15,6 @@ permissions:
 
 jobs:
   auto-assign:
-    # Skip auto-assign for pull requests from forks due to GITHUB_TOKEN permission restrictions
-    if: github.event_name == 'issues' || github.event.pull_request.head.repo.full_name == github.repository
     uses: ApolloAutomation/Workflows/.github/workflows/autoassign.yml@main
     with:
       assignees: bharvey88

@@ -18,7 +18,7 @@ esphome:
     name: "ApolloAutomation.MSR-1"
     version: "${version}"
 
-  min_version: 2025.2.0
+  min_version: 2025.11.0
   
 dashboard_import:
   package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
@@ -28,9 +28,13 @@ logger:
 
 ota:
   - platform: esphome
-    password: "apolloautomation"
+    password: ${ota_password}
+  - platform: http_request
+    id: ota_managed
 
 wifi:
+  on_connect:
+    - component.update: update_http_request
   power_save_mode: none
   ap:
     ssid: "Apollo MSR1 Hotspot"
@@ -40,6 +44,14 @@ captive_portal:
 web_server:
   port: 80
   version: 3
+
+safe_mode:
+
+update:
+  - platform: http_request
+    id: update_http_request
+    name: Firmware Update
+    source: https://apolloautomation.github.io/MSR-1/firmware/manifest.json
 
 packages:
   core: !include Core.yaml
