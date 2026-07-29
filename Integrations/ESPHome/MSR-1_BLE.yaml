@@ -3,6 +3,10 @@ substitutions:
   ota_stable_manifest: "https://apolloautomation.github.io/MSR-1/firmware-ble/manifest.json"
   ota_beta_manifest: "https://github.com/ApolloAutomation/MSR-1/releases/download/beta-fw/manifest-ble.json"
 
+  # Legacy BLE devices proxied unconditionally before the Bluetooth Proxy
+  # switch existed, so default it on rather than dropping the proxy on update.
+  bluetooth_proxy_restore_mode: RESTORE_DEFAULT_ON
+
 esphome:
   name: apollo-msr-1
   friendly_name: Apollo Multisensor Mk1 (MSR-1)
