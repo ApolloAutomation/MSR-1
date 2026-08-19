@@ -41,8 +41,8 @@ jobs:
         include:
           # Beta serves OTA updates only, so it builds the end-user image
           # (MSR-1.yaml), not the first-flash Factory image.
-          - { yaml: Integrations/ESPHome/beta-channel/MSR-1.yaml,     name: firmware-standard }
-          - { yaml: Integrations/ESPHome/beta-channel/MSR-1_BLE.yaml, name: firmware-ble-beta }
+          - { yaml: Integrations/ESPHome/MSR-1.yaml,     name: firmware-standard }
+          - { yaml: Integrations/ESPHome/MSR-1_BLE.yaml, name: firmware-ble-beta }
     uses: esphome/workflows/.github/workflows/build.yml@9f6577fd37b5cf773ab1b9be929714a0dcd15661 # 2026.7.0
     with:
       files: ${{ matrix.yaml }}
@@ -103,3 +103,14 @@ jobs:
               gh release upload beta-fw {} -R "${{ github.repository }}" --clobber \;
           done
           echo "Beta assets published."
+
+      - name: Point beta-fw tag at the built commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # gh release create tags default-branch HEAD, and uploads never move
+          # the tag, so without this the release's source commit drifts away
+          # from the assets actually published.
+          gh api -X PATCH "repos/${{ github.repository }}/git/refs/tags/beta-fw" \
+            -f sha="${{ github.sha }}" -F force=true
+          echo "beta-fw -> ${{ github.sha }}"
