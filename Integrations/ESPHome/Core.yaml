@@ -409,7 +409,9 @@ sensor:
             // Reduce DB Reporting: report on a meaningful change, but at least hourly so the sensor never looks frozen
             if (id(reduce_db_reporting).state) {
               uint32_t now = millis();
-              if (isnan(last_reported_value) ||
+              bool is_first_publish = last_report_time == 0;
+              bool nan_state_changed = isnan(current_value) != isnan(last_reported_value);
+              if (is_first_publish || nan_state_changed ||
                   abs(current_value - last_reported_value) >= 5.0 ||
                   (now - last_report_time) >= 3600000UL) {
                 last_reported_value = current_value;
@@ -627,7 +629,9 @@ sensor:
             // Reduce DB Reporting: report on a meaningful change, but at least hourly so the sensor never looks frozen
             if (id(reduce_db_reporting).state) {
               uint32_t now = millis();
-              if (isnan(last_reported_value) ||
+              bool is_first_publish = last_report_time == 0;
+              bool nan_state_changed = isnan(current_value) != isnan(last_reported_value);
+              if (is_first_publish || nan_state_changed ||
                   abs(current_value - last_reported_value) >= 20.0 ||
                   (now - last_report_time) >= 3600000UL) {
                 last_reported_value = current_value;
@@ -652,7 +656,9 @@ sensor:
             // Reduce DB Reporting: report on a meaningful change, but at least hourly so the sensor never looks frozen
             if (id(reduce_db_reporting).state) {
               uint32_t now = millis();
-              if (isnan(last_reported_value) ||
+              bool is_first_publish = last_report_time == 0;
+              bool nan_state_changed = isnan(current_value) != isnan(last_reported_value);
+              if (is_first_publish || nan_state_changed ||
                   abs(current_value - last_reported_value) >= 20.0 ||
                   (now - last_report_time) >= 3600000UL) {
                 last_reported_value = current_value;
