@@ -402,22 +402,26 @@ sensor:
     id: sys_esp_temperature
     filters:
         - lambda: |-
-            static float last_reported_value = 0.0;
+            static float last_reported_value = NAN;
+            static uint32_t last_report_time = 0;
             float current_value = x;
 
-            // Check if the reduce_db_reporting switch is on
+            // Reduce DB Reporting: report on a meaningful change, but at least hourly so the sensor never looks frozen
             if (id(reduce_db_reporting).state) {
-              // Apply delta filter: only report if the value has changed by 2 or more
-              if (abs(current_value - last_reported_value) >= 5.0) {
-                last_reported_value = current_value;  // Update the last reported value
+              uint32_t now = millis();
+              bool is_first_publish = last_report_time == 0;
+              bool nan_state_changed = isnan(current_value) != isnan(last_reported_value);
+              if (is_first_publish || nan_state_changed ||
+                  abs(current_value - last_reported_value) >= 5.0 ||
+                  (now - last_report_time) >= 3600000UL) {
+                last_reported_value = current_value;
+                last_report_time = now;
                 return current_value;
-              } else {
-                // Return the last reported value without updating if change is less than 2
-                return {};  // Discard the update
               }
+              return {};  // Within delta and under the hourly heartbeat -> discard
             } else {
-              // If reduce_db_reporting is off, report the current value normally
               last_reported_value = current_value;
+              last_report_time = millis();
               return current_value;
             }
 
@@ -618,22 +622,26 @@ sensor:
       id: ltr390light
       filters:
         - lambda: |-
-            static float last_reported_value = 0.0;
+            static float last_reported_value = NAN;
+            static uint32_t last_report_time = 0;
             float current_value = x;
 
-            // Check if the reduce_db_reporting switch is on
+            // Reduce DB Reporting: report on a meaningful change, but at least hourly so the sensor never looks frozen
             if (id(reduce_db_reporting).state) {
-              // Apply delta filter: only report if the value has changed by 2 or more
-              if (abs(current_value - last_reported_value) >= 20.0) {
-                last_reported_value = current_value;  // Update the last reported value
+              uint32_t now = millis();
+              bool is_first_publish = last_report_time == 0;
+              bool nan_state_changed = isnan(current_value) != isnan(last_reported_value);
+              if (is_first_publish || nan_state_changed ||
+                  abs(current_value - last_reported_value) >= 20.0 ||
+                  (now - last_report_time) >= 3600000UL) {
+                last_reported_value = current_value;
+                last_report_time = now;
                 return current_value;
-              } else {
-                // Return the last reported value without updating if change is less than 2
-                return {};  // Discard the update
               }
+              return {};  // Within delta and under the hourly heartbeat -> discard
             } else {
-              // If reduce_db_reporting is off, report the current value normally
               last_reported_value = current_value;
+              last_report_time = millis();
               return current_value;
             }
     uv_index:
@@ -641,22 +649,26 @@ sensor:
       id: ltr390uvindex
       filters:
         - lambda: |-
-            static float last_reported_value = 0.0;
+            static float last_reported_value = NAN;
+            static uint32_t last_report_time = 0;
             float current_value = x;
 
-            // Check if the reduce_db_reporting switch is on
+            // Reduce DB Reporting: report on a meaningful change, but at least hourly so the sensor never looks frozen
             if (id(reduce_db_reporting).state) {
-              // Apply delta filter: only report if the value has changed by 2 or more
-              if (abs(current_value - last_reported_value) >= 20.0) {
-                last_reported_value = current_value;  // Update the last reported value
+              uint32_t now = millis();
+              bool is_first_publish = last_report_time == 0;
+              bool nan_state_changed = isnan(current_value) != isnan(last_reported_value);
+              if (is_first_publish || nan_state_changed ||
+                  abs(current_value - last_reported_value) >= 20.0 ||
+                  (now - last_report_time) >= 3600000UL) {
+                last_reported_value = current_value;
+                last_report_time = now;
                 return current_value;
-              } else {
-                // Return the last reported value without updating if change is less than 2
-                return {};  // Discard the update
               }
+              return {};  // Within delta and under the hourly heartbeat -> discard
             } else {
-              // If reduce_db_reporting is off, report the current value normally
               last_reported_value = current_value;
+              last_report_time = millis();
               return current_value;
             }
 
