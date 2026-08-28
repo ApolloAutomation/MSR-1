@@ -682,7 +682,7 @@ light:
     chipset: WS2812
     num_leds: 1
     rmt_symbols: 48
-    rgb_order: grb
+    channel_colors: GRB
     effects:
       - pulse:
           name: "Slow Pulse"
