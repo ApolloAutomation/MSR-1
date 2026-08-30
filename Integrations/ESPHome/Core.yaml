@@ -1,5 +1,5 @@
 substitutions:
-  version:  "26.8.19.1"
+  version:  "26.8.27.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
@@ -682,7 +682,7 @@ light:
     chipset: WS2812
     num_leds: 1
     rmt_symbols: 48
-    rgb_order: grb
+    channel_colors: GRB
     effects:
       - pulse:
           name: "Slow Pulse"
