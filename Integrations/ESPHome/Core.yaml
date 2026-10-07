@@ -4,6 +4,12 @@ substitutions:
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
   # device on your network uses a unique secret instead of the shared default.
+  # To use encrypted OTA (API noise key) instead of a password, add to your
+  # device YAML:
+  #   ota:
+  #     - id: !extend ota_default
+  #       password: !remove
+  #       encryption:
   ota_password: "apolloautomation"
   # Manifest URL bases. Stable = GitHub Pages (main branch builds).
   # Beta = rolling "beta" pre-release assets (beta branch builds).

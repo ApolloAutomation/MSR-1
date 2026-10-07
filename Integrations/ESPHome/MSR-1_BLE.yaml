@@ -38,6 +38,7 @@ dashboard_import:
 
 ota:
   - platform: esphome
+    id: ota_default
     password: ${ota_password}
   - platform: http_request
     id: ota_managed
