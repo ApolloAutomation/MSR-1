@@ -329,8 +329,15 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      bool still_in_zone = id(radar_has_still_target).state && (id(still_distance).state >= id(radar_z1_start).state) && (id(still_distance).state <= id(radar_z1_end).state);
-      bool moving_in_zone = id(radar_has_moving_target).state && (id(moving_distance).state >= id(radar_z1_start).state) && (id(moving_distance).state <= id(radar_z1_end).state);
+      // Zones compare the radar's own distances (get_raw_state), not the values sent to Home
+      // Assistant: those skip moves under 5 cm with Reduce DB Reporting on and only update when
+      // the radar's distance changes, so they can lag behind or stay unknown after a target returns.
+      // While the radar holds a target after a short loss it can report 0 cm. That is not a
+      // real position, so it never counts toward Zone 1.
+      const float still_cm = id(still_distance).get_raw_state();
+      const float moving_cm = id(moving_distance).get_raw_state();
+      bool still_in_zone = id(radar_has_still_target).state && (still_cm > 0) && (still_cm >= id(radar_z1_start).state) && (still_cm <= id(radar_z1_end).state);
+      bool moving_in_zone = id(radar_has_moving_target).state && (moving_cm > 0) && (moving_cm >= id(radar_z1_start).state) && (moving_cm <= id(radar_z1_end).state);
       
       if (still_in_zone || moving_in_zone) {
         return true;
@@ -343,8 +350,12 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      bool still_in_zone = id(radar_has_still_target).state && (id(still_distance).state > id(radar_z1_end).state) && (id(still_distance).state <= id(radar_z2_end).state);
-      bool moving_in_zone = id(radar_has_moving_target).state && (id(moving_distance).state > id(radar_z1_end).state) && (id(moving_distance).state <= id(radar_z2_end).state);
+      // The radar's own distances, as in Zone 1. This zone only counts distances above the
+      // previous zone's end, so a 0 cm reading never lands here.
+      const float still_cm = id(still_distance).get_raw_state();
+      const float moving_cm = id(moving_distance).get_raw_state();
+      bool still_in_zone = id(radar_has_still_target).state && (still_cm > id(radar_z1_end).state) && (still_cm <= id(radar_z2_end).state);
+      bool moving_in_zone = id(radar_has_moving_target).state && (moving_cm > id(radar_z1_end).state) && (moving_cm <= id(radar_z2_end).state);
 
       if (still_in_zone || moving_in_zone) {
         return true;
@@ -357,8 +368,12 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:motion-sensor
     lambda: |-
-      bool still_in_zone = id(radar_has_still_target).state && (id(still_distance).state > id(radar_z2_end).state) && (id(still_distance).state <= id(radar_z3_end).state);
-      bool moving_in_zone = id(radar_has_moving_target).state && (id(moving_distance).state > id(radar_z2_end).state) && (id(moving_distance).state <= id(radar_z3_end).state);
+      // The radar's own distances, as in Zone 1. This zone only counts distances above the
+      // previous zone's end, so a 0 cm reading never lands here.
+      const float still_cm = id(still_distance).get_raw_state();
+      const float moving_cm = id(moving_distance).get_raw_state();
+      bool still_in_zone = id(radar_has_still_target).state && (still_cm > id(radar_z2_end).state) && (still_cm <= id(radar_z3_end).state);
+      bool moving_in_zone = id(radar_has_moving_target).state && (moving_cm > id(radar_z2_end).state) && (moving_cm <= id(radar_z3_end).state);
 
       if (still_in_zone || moving_in_zone) {
         return true;
