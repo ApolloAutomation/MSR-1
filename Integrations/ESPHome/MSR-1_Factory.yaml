@@ -18,7 +18,8 @@ esphome:
     name: "ApolloAutomation.MSR-1_Factory"
     version: "${version}"
 
-  min_version: 2026.8.0
+  # improv_ble (renamed from esp32_improv) needs 2026.10
+  min_version: 2026.10.0
 
 dashboard_import:
   package_import_url: github://ApolloAutomation/MSR-1/Integrations/ESPHome/MSR-1.yaml
@@ -26,12 +27,14 @@ dashboard_import:
 
 improv_serial:
 
-esp32_improv:
+improv_ble:
   authorizer: none
 
 wifi:
   on_connect:
     - component.update: update_http_request
+  # Keeps today's no-reboot on lost Wi-Fi; 2026.11 drops the AP exemption
+  reboot_timeout: 0s
   ap:
     ssid: "Apollo MSR1 Hotspot"
 
