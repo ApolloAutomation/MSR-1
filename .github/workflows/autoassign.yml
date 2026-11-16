@@ -1,8 +1,8 @@
 name: Auto Assign
-
-# pull_request_target (not pull_request) so auto-assign works on fork PRs too:
-# forks get a read-only token on pull_request and cannot be assigned. Safe here
-# because this only assigns a user and never checks out or runs PR code.
+# pull_request_target (not pull_request) so assignment works on
+# fork-submitted PRs; fork pull_request runs get a read-only token.
+# Safe because this workflow never checks out or executes PR code.
+# The assignee comes from the AUTO_ASSIGNEE organization variable.
 on:
   issues:
     types: [opened]
@@ -16,6 +16,3 @@ permissions:
 jobs:
   auto-assign:
     uses: ApolloAutomation/Workflows/.github/workflows/autoassign.yml@main
-    with:
-      assignees: bharvey88
-      num-of-assignees: 1
