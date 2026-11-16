@@ -1,5 +1,5 @@
 substitutions:
-  version:  "26.11.15.1"
+  version:  "26.11.16.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
@@ -419,20 +419,27 @@ binary_sensor:
             
     on_release:
       then:
-        - lambda: |-
-            // Tap: status + self-test; hold 10 s: factory reset.
-            // 3-10 s does nothing on this mains-powered sensor.
-            if (millis() - id(button_press_timestamp) >= 10000) {
-              id(factory_reset_switch).turn_on();
-            }
-            else if (millis() - id(button_press_timestamp) < 3000) {
-              // StatusCheck
-              id(statusCheck).execute();
-              delay(3000);
-              id(testCycleCount) = 0;
-              id(runTest) = true;
-              id(testScript).execute();
-            }
+        # Tap: status + self-test; hold 10 s: factory reset.
+        # 3-10 s does nothing on this mains-powered sensor.
+        - if:
+            condition:
+              lambda: "return millis() - id(button_press_timestamp) >= 10000;"
+            then:
+              - switch.turn_on: factory_reset_switch
+            else:
+              - if:
+                  condition:
+                    lambda: "return millis() - id(button_press_timestamp) < 3000;"
+                  then:
+                    # Let the status colour finish before the self-test takes the LED.
+                    # YAML waits/delays keep the main loop running (no blocking delay()).
+                    - script.execute: statusCheck
+                    - script.wait: statusCheck
+                    - delay: 3s
+                    - lambda: |-
+                        id(testCycleCount) = 0;
+                        id(runTest) = true;
+                    - script.execute: testScript
 
 ld2410:
   id: ld2410_radar
