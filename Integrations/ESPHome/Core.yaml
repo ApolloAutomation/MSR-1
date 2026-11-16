@@ -1,5 +1,5 @@
 substitutions:
-  version:  "26.10.12.1"
+  version:  "26.11.15.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
   # Default OTA password. Override in your device YAML by re-declaring
   # `substitutions: { ota_password: !secret <name>_ota_password }` so each
@@ -122,6 +122,34 @@ globals:
     restore_value: no
     type: uint32_t
     initial_value: '0'
+  - id: runTest
+    restore_value: no
+    type: bool
+    initial_value: "false"
+  - id: testCycleCount
+    type: int
+    restore_value: no
+    initial_value: "0"
+  - id: bme280Passed
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: scd40Passed
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: lightSensorPassed
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: uvIndexPassed
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: ld2410Passed
+    type: bool
+    restore_value: no
+    initial_value: "false"
 
 i2c:
   sda: GPIO1
@@ -392,10 +420,18 @@ binary_sensor:
     on_release:
       then:
         - lambda: |-
-            if (millis() - id(button_press_timestamp) >= 5000) {
-              // Remove Wifi
+            // Tap: status + self-test; hold 10 s: factory reset.
+            // 3-10 s does nothing on this mains-powered sensor.
+            if (millis() - id(button_press_timestamp) >= 10000) {
               id(factory_reset_switch).turn_on();
-              
+            }
+            else if (millis() - id(button_press_timestamp) < 3000) {
+              // StatusCheck
+              id(statusCheck).execute();
+              delay(3000);
+              id(testCycleCount) = 0;
+              id(runTest) = true;
+              id(testScript).execute();
             }
 
 ld2410:
@@ -834,6 +870,95 @@ script:
           ESP_LOGI("firmware", "OTA manifest set to: %s", url);
           id(update_http_request).set_source_url(url);
       - component.update: update_http_request
+
+  # LED shows connection state for 5 s: blue = connected to Home Assistant,
+  # green = on the network only, yellow = no network.
+  - id: statusCheck
+    then:
+      - if:
+          condition:
+            - lambda: 'return id(ink_ha_connected).state;'
+          then:
+            - logger.log: "Apollo Automation: Connected To HA"
+            - light.turn_on:
+                id: rgb_light
+                brightness: 100%
+                red: 0%
+                green: 0%
+                blue: 100%
+          else:
+            - if:
+                condition:
+                  - wifi.connected:
+                then:
+                  - logger.log: "Apollo Automation: Connected To Network"
+                  - light.turn_on:
+                      id: rgb_light
+                      brightness: 100%
+                      red: 0%
+                      green: 100%
+                      blue: 0%
+                else:
+                  - logger.log: "Apollo Automation: Not Connected To Network"
+                  - light.turn_on:
+                      id: rgb_light
+                      brightness: 100%
+                      red: 100%
+                      green: 100%
+                      blue: 0%
+      - delay: 5s
+      - light.turn_off: rgb_light
+
+  # Self-test: checks each sensor reports within 5 s, then LED green
+  # (all passed) or red (something failed) for 5 s.
+  - id: testScript
+    then:
+      if:
+        condition:
+          - lambda: "return id(runTest) == true;"
+        then:
+          - lambda: |-
+              id(runTest) = false;
+              id(testCycleCount) = 0;
+              id(bme280Passed) = false;
+              id(scd40Passed) = false;
+              id(lightSensorPassed) = false;
+              id(uvIndexPassed) = false;
+              id(ld2410Passed) = false;
+          - while:
+              condition:
+                - lambda: "return id(testCycleCount) < 5;"
+              then:
+                - lambda: |-
+                    if (!id(bme280Passed) && id(bme280pressure).state > 0) id(bme280Passed) = true;
+                    if (!id(scd40Passed) && id(co2).state > 0) id(scd40Passed) = true;
+                    if (!id(lightSensorPassed) && id(ltr390light).state > 10) id(lightSensorPassed) = true;
+                    if (!id(uvIndexPassed) && !isnan(id(ltr390uvindex).state)) id(uvIndexPassed) = true;
+                    if (!id(ld2410Passed) && id(radar_has_target).state && id(radar_detection_distance).state > 10) id(ld2410Passed) = true;
+                    if (id(bme280Passed) && id(scd40Passed) && id(lightSensorPassed) && id(uvIndexPassed) && id(ld2410Passed)) {
+                      id(testCycleCount) = 100;  // All passed: end the loop early
+                    }
+                - delay: 1s
+                - lambda: "id(testCycleCount) += 1;"
+
+          #Check If Test Passed To Trigger Lights
+          - if:
+              condition:
+                - lambda: "return id(bme280Passed) && id(scd40Passed) && id(lightSensorPassed) && id(uvIndexPassed) && id(ld2410Passed);"
+              then:
+                - light.turn_on:
+                    id: rgb_light
+                    red: 0%
+                    green: 100%
+                    blue: 0%
+              else:
+                - light.turn_on:
+                    id: rgb_light
+                    red: 100%
+                    green: 0%
+                    blue: 0%
+          - delay: 5s
+          - light.turn_off: rgb_light
 
 
 
