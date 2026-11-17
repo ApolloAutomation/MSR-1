@@ -28,7 +28,7 @@ esphome:
     version: "${version}"
 
   # improv_ble (renamed from esp32_improv) needs 2026.10
-  min_version: 2026.10.0
+  min_version: 2026.10.1
 
 logger:
 
