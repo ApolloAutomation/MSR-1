@@ -65,8 +65,6 @@ captive_portal:
 web_server:
   port: 80
   version: 3
-  # No firmware upload from the device page; the setup hotspot still allows it
-  ota: false
 
 http_request:
   verify_ssl: true
